@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dynamo Dialects — Study Tools & Calculators</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Special+Elite&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #080c08;
+      --black2:  #0e140e;
+      --black3:  #141a14;
+      --green:   #22c55e;
+      --green2:  #16a34a;
+      --green3:  #bbf7d0;
+      --green4:  #052e16;
+      --white:   #f0f4f0;
+      --white2:  #d4dcd4;
+      --muted:   #6b7a6b;
+      --border:  #1a2a1a;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── CURSOR ── */
+    .cursor {
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: transform 0.06s ease;
+    }
+    .cursor-ring {
+      width: 32px; height: 32px;
+      border: 1px solid var(--green);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: all 0.15s ease;
+      opacity: 0.4;
+    }
+
+    /* ── TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.6;
+    }
+
+    /* ════════════════════════════
+       HEADER
+    ════════════════════════════ */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(8,12,8,0.94);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 56px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-date {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.68rem; color: var(--muted);
+      letter-spacing: 0.12em;
+    }
+    .header-tagline {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.68rem; color: var(--green);
+      letter-spacing: 0.1em;
+    }
+
+    .header-main {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 56px;
+    }
+    .logo {
+      text-decoration: none;
+      display: flex; flex-direction: column; align-items: flex-start;
+    }
+    .logo-name {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900; font-style: italic;
+      font-size: 1.7rem; color: var(--white);
+      letter-spacing: -0.01em; line-height: 1;
+    }
+    .logo-name span { color: var(--green); }
+    .logo-sub {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.58rem; color: var(--muted);
+      letter-spacing: 0.2em; text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    nav { display: flex; align-items: center; gap: 36px; }
+    nav a {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.72rem; color: var(--muted);
+      text-decoration: none; letter-spacing: 0.12em;
+      text-transform: uppercase; cursor: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+    nav a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 1px; background: var(--green);
+      transition: width 0.3s ease;
+    }
+    nav a:hover { color: var(--green); }
+    nav a:hover::after { width: 100%; }
+
+    .nav-cta {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.72rem; letter-spacing: 0.1em;
+      padding: 8px 20px;
+      border: 1px solid var(--green2);
+      color: var(--green) !important;
+      text-decoration: none; cursor: none;
+      transition: background 0.2s, color 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--green) !important; color: var(--black) !important; }
+    .nav-cta::after { display: none !important; }
+
+    /* ════════════════════════════
+       HERO
+    ════════════════════════════ */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 160px 56px 80px;
+      gap: 60px;
+      align-items: center;
+      position: relative; overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(34,197,94,0.06) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+    }
+
+    .hero-bg-number {
+      position: absolute; right: -40px; top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Playfair Display', serif;
+      font-size: 28vw; font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(34,197,94,0.05);
+      pointer-events: none; line-height: 1;
+      user-select: none;
+    }
+
+    .hero-left { position: relative; z-index: 1; }
+
+    .hero-issue {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Special Elite', cursive;
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--green);
+      border: 1px solid rgba(34,197,94,0.3);
+      padding: 6px 14px; margin-bottom: 36px;
+      opacity: 0; animation: riseUp 0.7s ease 0.2s forwards;
+    }
+    .issue-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green);
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(3.2rem, 6vw, 6rem);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+      opacity: 0; animation: riseUp 0.8s ease 0.35s forwards;
+    }
+    .hero h1 .italic { font-style: italic; color: var(--green); }
+    .hero h1 .outline {
+      -webkit-text-stroke: 1.5px rgba(240,244,240,0.25);
+      color: transparent;
+    }
+
+    .hero-rule {
+      width: 80px; height: 2px;
+      background: linear-gradient(90deg, var(--green), transparent);
+      margin: 28px 0;
+      opacity: 0; animation: riseUp 0.7s ease 0.5s forwards;
+    }
+
+    .hero-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; line-height: 1.8;
+      color: var(--white2); font-weight: 300;
+      max-width: 460px; margin-bottom: 44px;
+      opacity: 0; animation: riseUp 0.8s ease 0.65s forwards;
+    }
+
+    .hero-cta {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      opacity: 0; animation: riseUp 0.8s ease 0.8s forwards;
+    }
+    .btn-primary {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.78rem; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--green); color: var(--black);
+      padding: 14px 32px; border: none;
+      text-decoration: none; cursor: none;
+      display: inline-flex; align-items: center; gap: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(34,197,94,0.25);
+    }
+    .btn-secondary {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.78rem; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: transparent; color: var(--white2);
+      padding: 14px 32px;
+      border: 1px solid var(--border);
+      text-decoration: none; cursor: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--green2); color: var(--green); }
+
+    .hero-right {
+      position: relative; z-index: 1;
+      opacity: 0; animation: riseUp 0.9s ease 0.5s forwards;
+    }
+    .hero-card {
+      background: var(--black2);
+      border: 1px solid var(--border);
+      padding: 44px;
+      position: relative;
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute; top: -1px; left: 32px; right: 32px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+    }
+    .hero-card::after {
+      content: '';
+      position: absolute; inset: 8px;
+      border: 1px solid rgba(34,197,94,0.08);
+      pointer-events: none;
+    }
+
+    .card-header-label {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.6rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--green);
+      margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+    }
+    .card-header-label::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 700; font-style: italic;
+      margin-bottom: 24px; line-height: 1.3;
+    }
+    .card-title span { color: var(--green); }
+
+    .card-stats {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; background: var(--border);
+      margin-bottom: 28px;
+    }
+    .card-stat {
+      background: var(--black2);
+      padding: 20px; text-align: center;
+    }
+    .stat-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem; font-weight: 900;
+      color: var(--green); line-height: 1;
+    }
+    .stat-lbl {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.6rem; color: var(--muted);
+      letter-spacing: 0.1em; margin-top: 6px;
+      text-transform: uppercase;
+    }
+
+    .card-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+    .badge {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.62rem; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      padding: 5px 12px; color: var(--muted);
+    }
+    .badge.active { border-color: rgba(34,197,94,0.4); color: var(--green); }
+
+    @keyframes riseUp {
+      from { opacity:0; transform: translateY(28px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* ════════════════════════════
+       MARQUEE
+    ════════════════════════════ */
+    .marquee-wrap {
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--black2);
+      padding: 14px 0;
+      position: relative; z-index: 1;
+    }
+    .marquee-track {
+      display: flex; gap: 40px;
+      animation: ticker 22s linear infinite;
+      width: max-content;
+    }
+    .marquee-item {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.7rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--muted);
+      white-space: nowrap; display: flex; align-items: center; gap: 16px;
+    }
+    .marquee-item b { color: var(--green); font-weight: 400; }
+    @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    /* ════════════════════════════
+       SECTION COMMON
+    ════════════════════════════ */
+    .section-eyebrow {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.65rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--green);
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px;
+    }
+    .section-eyebrow::before { content: '§'; font-size: 0.8rem; }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900; font-style: italic;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      letter-spacing: -0.02em; line-height: 1.05;
+    }
+    .section-title em { color: var(--green); font-style: normal; }
+
+    /* ════════════════════════════
+       TOOLS
+    ════════════════════════════ */
+    .tools-section {
+      padding: 100px 56px;
+      position: relative; z-index: 1;
+    }
+
+    .tools-header {
+      display: flex; justify-content: space-between;
+      align-items: flex-end; margin-bottom: 64px;
+      flex-wrap: wrap; gap: 24px;
+    }
+    .tools-header-right {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; color: var(--muted);
+      font-style: italic; max-width: 320px; line-height: 1.6;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--border);
+    }
+
+    .tool-card {
+      background: var(--black2);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 40px 36px;
+      text-decoration: none; color: inherit;
+      cursor: none;
+      position: relative; overflow: hidden;
+      transition: background 0.3s;
+      display: flex; flex-direction: column;
+    }
+    .tool-card:nth-child(3n) { border-right: none; }
+
+    .tool-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; bottom: 0;
+      width: 2px; background: var(--green);
+      transform: scaleY(0); transform-origin: top;
+      transition: transform 0.4s ease;
+    }
+    .tool-card:hover { background: var(--black3); }
+    .tool-card:hover::before { transform: scaleY(1); }
+
+    .tool-card.coming { opacity: 0.38; pointer-events: none; }
+
+    .tool-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem; font-weight: 900;
+      color: rgba(34,197,94,0.08);
+      position: absolute; top: 20px; right: 24px;
+      line-height: 1; user-select: none;
+      transition: color 0.3s;
+    }
+    .tool-card:hover .tool-num { color: rgba(34,197,94,0.15); }
+
+    .tool-icon-wrap {
+      width: 52px; height: 52px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: 28px;
+      background: var(--black);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .tool-card:hover .tool-icon-wrap {
+      border-color: var(--green2);
+      transform: rotate(-5deg);
+    }
+
+    .tool-cat {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.6rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--green);
+      margin-bottom: 10px;
+    }
+    .tool-name {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700; font-size: 1.2rem;
+      line-height: 1.25; margin-bottom: 14px;
+    }
+    .tool-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem; color: var(--muted);
+      line-height: 1.7; flex: 1;
+    }
+
+    .tool-foot {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-top: 28px; padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .tool-status {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.62rem; letter-spacing: 0.1em;
+      display: flex; align-items: center; gap: 7px;
+      text-transform: uppercase;
+    }
+    .sdot { width: 5px; height: 5px; border-radius: 50%; }
+    .live { color: #4ade80; }
+    .live .sdot { background: #4ade80; box-shadow: 0 0 6px #4ade80; }
+    .soon { color: var(--muted); }
+    .soon .sdot { background: var(--muted); }
+
+    .tool-arr {
+      width: 30px; height: 30px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; color: var(--muted);
+      transition: all 0.25s;
+    }
+    .tool-card:hover .tool-arr {
+      background: var(--green); border-color: var(--green);
+      color: var(--black); transform: rotate(45deg);
+    }
+
+    /* ════════════════════════════
+       ABOUT
+    ════════════════════════════ */
+    .about-section {
+      padding: 100px 56px;
+      border-top: 1px solid var(--border);
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 100px; align-items: center;
+      position: relative; z-index: 1;
+    }
+
+    .vintage-frame {
+      border: 1px solid var(--border);
+      padding: 56px 48px;
+      position: relative;
+      background: var(--black2);
+    }
+    .vintage-frame::before {
+      content: '';
+      position: absolute; inset: 10px;
+      border: 1px solid rgba(34,197,94,0.1);
+      pointer-events: none;
+    }
+    .vintage-frame::after {
+      content: '❧';
+      position: absolute; top: -14px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.4rem; color: var(--green);
+      background: var(--black2); padding: 0 12px;
+    }
+
+    .vf-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 400; font-style: italic;
+      line-height: 1.5; color: var(--white); margin-bottom: 24px;
+    }
+    .vf-quote span { color: var(--green); }
+    .vf-rule { width: 48px; height: 1px; background: var(--green2); margin-bottom: 16px; }
+    .vf-author {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.68rem; color: var(--muted);
+      letter-spacing: 0.12em; text-transform: uppercase;
+    }
+
+    .corner-ornament {
+      position: absolute; font-size: 1rem;
+      color: var(--green); opacity: 0.3;
+    }
+    .co-tl { top: 4px; left: 4px; }
+    .co-tr { top: 4px; right: 4px; transform: scaleX(-1); }
+    .co-bl { bottom: 4px; left: 4px; transform: scaleY(-1); }
+    .co-br { bottom: 4px; right: 4px; transform: scale(-1); }
+
+    .about-right .section-title { margin-bottom: 28px; }
+    .about-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; line-height: 1.85;
+      color: var(--muted); margin-bottom: 16px;
+    }
+
+    .about-pillars {
+      margin-top: 36px; display: flex; flex-direction: column;
+      border: 1px solid var(--border);
+    }
+    .pillar {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .pillar:last-child { border-bottom: none; }
+    .pillar-icon {
+      font-size: 1rem; color: var(--green);
+      font-family: 'Special Elite', cursive;
+      min-width: 28px; margin-top: 2px;
+    }
+    .pillar-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem; color: var(--white2); line-height: 1.5;
+    }
+    .pillar-text strong {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700; color: var(--white);
+      display: block; margin-bottom: 2px; font-size: 1rem;
+    }
+
+    /* ════════════════════════════
+       ORNAMENT DIVIDER
+    ════════════════════════════ */
+    .ornament-divider {
+      text-align: center; padding: 32px;
+      position: relative; z-index: 1;
+    }
+    .ornament-divider::before, .ornament-divider::after {
+      content: '';
+      position: absolute; top: 50%;
+      width: calc(50% - 80px); height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border));
+    }
+    .ornament-divider::before { left: 0; }
+    .ornament-divider::after { right: 0; transform: scaleX(-1); }
+    .ornament-divider span {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; color: var(--green);
+      opacity: 0.5; letter-spacing: 12px;
+    }
+
+    /* ════════════════════════════
+       FOOTER
+    ════════════════════════════ */
+    footer {
+      border-top: 1px solid var(--border);
+      position: relative; z-index: 1;
+    }
+    .footer-main {
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 60px; padding: 64px 56px 48px;
+    }
+
+    .footer-brand-name {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900; font-style: italic;
+      font-size: 1.8rem; color: var(--white); margin-bottom: 6px;
+    }
+    .footer-brand-name span { color: var(--green); }
+    .footer-brand-sub {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.6rem; color: var(--muted);
+      letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 20px;
+    }
+    .footer-about {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem; color: var(--muted);
+      line-height: 1.7; max-width: 300px;
+    }
+
+    .footer-col-title {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.65rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--green);
+      margin-bottom: 20px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .footer-links { display: flex; flex-direction: column; gap: 12px; }
+    .footer-links a {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem; color: var(--muted);
+      text-decoration: none; cursor: none;
+      transition: color 0.2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .footer-links a::before { content: '›'; color: var(--green); }
+    .footer-links a:hover { color: var(--green); }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding: 20px 56px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-copy {
+      font-family: 'Special Elite', cursive;
+      font-size: 0.62rem; color: var(--muted); letter-spacing: 0.08em;
+    }
+    .footer-copy span { color: var(--green); }
+
+    /* ════════════════════════════
+       RESPONSIVE
+    ════════════════════════════ */
+    @media (max-width: 900px) {
+      .header-top { display: none; }
+      .header-main { padding: 14px 24px; }
+      .hero { grid-template-columns: 1fr; padding: 120px 24px 60px; gap: 40px; }
+      .hero-right { display: none; }
+      .tools-section, .about-section { padding: 60px 24px; }
+      .tools-grid { grid-template-columns: 1fr; }
+      .tool-card { border-right: none; }
+      .about-section { grid-template-columns: 1fr; gap: 40px; }
+      .footer-main { grid-template-columns: 1fr; gap: 36px; padding: 40px 24px; }
+      .footer-bottom { padding: 16px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="ring"></div>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <div class="header-top">
+    <span class="header-date">Est. 2025 · Chennai, India</span>
+    <span class="header-tagline">Free Tools · No Sign-up · No Ads</span>
+  </div>
+  <div class="header-main">
+    <a href="#" class="logo">
+      <div class="logo-name">Dynamo <span>Dialects</span></div>
+      <div class="logo-sub">Study Tools & Calculators</div>
+    </a>
+    <nav>
+      <a href="#tools">Tools</a>
+      <a href="#about">About</a>
+      <a href="mailto:hello@dynamodialects.in" class="nav-cta">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-bg-number">D</div>
+
+  <div class="hero-left">
+    <div class="hero-issue">
+      <span class="issue-dot"></span>
+      Free · Open · Always Online
+    </div>
+
+    <h1>
+      Sharp<br>
+      <span class="italic">Tools</span> for<br>
+      <span class="outline">Sharper</span><br>
+      Minds.
+    </h1>
+
+    <div class="hero-rule"></div>
+
+    <p class="hero-desc">
+      Practical, no-nonsense calculators built for Indian students, investors & travellers. From Railway booking windows to stock returns — clarity at your fingertips.
+    </p>
+
+    <div class="hero-cta">
+      <a href="#tools" class="btn-primary">Browse Tools →</a>
+      <a href="#about" class="btn-secondary">Our Mission</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-card">
+      <div class="card-header-label">Site Overview</div>
+      <div class="card-title">Built for <span>Real</span> Indian Learners</div>
+      <div class="card-stats">
+        <div class="card-stat">
+          <div class="stat-val">10+</div>
+          <div class="stat-lbl">Tools Planned</div>
+        </div>
+        <div class="card-stat">
+          <div class="stat-val">₹0</div>
+          <div class="stat-lbl">Cost Forever</div>
+        </div>
+        <div class="card-stat">
+          <div class="stat-val">0</div>
+          <div class="stat-lbl">Sign-ups Needed</div>
+        </div>
+        <div class="card-stat">
+          <div class="stat-val">∞</div>
+          <div class="stat-lbl">Uses Allowed</div>
+        </div>
+      </div>
+      <div class="card-badges">
+        <span class="badge active">🚆 Railway</span>
+        <span class="badge active">📈 Stocks</span>
+        <span class="badge">💰 SIP</span>
+        <span class="badge">🏦 EMI</span>
+        <span class="badge">📊 CAGR</span>
+        <span class="badge">🏧 FD/RD</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item">Railway Booking <b>✦</b></div>
+    <div class="marquee-item">Stock Returns <b>✦</b></div>
+    <div class="marquee-item">SIP Calculator <b>✦</b></div>
+    <div class="marquee-item">EMI Planner <b>✦</b></div>
+    <div class="marquee-item">FD Maturity <b>✦</b></div>
+    <div class="marquee-item">CAGR Calculator <b>✦</b></div>
+    <div class="marquee-item">Tax Estimator <b>✦</b></div>
+    <div class="marquee-item">100% Free <b>✦</b></div>
+    <div class="marquee-item">Railway Booking <b>✦</b></div>
+    <div class="marquee-item">Stock Returns <b>✦</b></div>
+    <div class="marquee-item">SIP Calculator <b>✦</b></div>
+    <div class="marquee-item">EMI Planner <b>✦</b></div>
+    <div class="marquee-item">FD Maturity <b>✦</b></div>
+    <div class="marquee-item">CAGR Calculator <b>✦</b></div>
+    <div class="marquee-item">Tax Estimator <b>✦</b></div>
+    <div class="marquee-item">100% Free <b>✦</b></div>
+  </div>
+</div>
+
+<!-- ══ TOOLS ══ -->
+<section class="tools-section" id="tools">
+  <div class="tools-header">
+    <div>
+      <div class="section-eyebrow">All Calculators</div>
+      <h2 class="section-title">The <em>Complete</em><br>Toolbox</h2>
+    </div>
+    <div class="tools-header-right">
+      Every tool is built with precision for the Indian context — IRCTC rules, Indian Rupee, Indian financial instruments.
+    </div>
+  </div>
+
+  <div class="tools-grid">
+    <a href="railway-calc.html" class="tool-card">
+      <div class="tool-num">01</div>
+      <div class="tool-icon-wrap">🚆</div>
+      <div class="tool-cat">Travel</div>
+      <div class="tool-name">Railway Reservation Date Calculator</div>
+      <div class="tool-desc">Find exactly when IRCTC advance booking opens for your journey. Never miss the 60-day window or Tatkal timing again.</div>
+      <div class="tool-foot">
+        <div class="tool-status live"><div class="sdot"></div> Live Now</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </a>
+
+    <a href="stock-returns.html" class="tool-card">
+      <div class="tool-num">02</div>
+      <div class="tool-icon-wrap">📈</div>
+      <div class="tool-cat">Finance</div>
+      <div class="tool-name">Stock Returns Calculator</div>
+      <div class="tool-desc">Calculate profit or loss on any stock trade. Enter buy price, sell price and quantity — get instant P&L with percentage returns.</div>
+      <div class="tool-foot">
+        <div class="tool-status live"><div class="sdot"></div> Live Now</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </a>
+
+    <div class="tool-card coming">
+      <div class="tool-num">03</div>
+      <div class="tool-icon-wrap">💰</div>
+      <div class="tool-cat">Finance</div>
+      <div class="tool-name">SIP Calculator</div>
+      <div class="tool-desc">Project the future value of monthly SIP investments. See the power of compounding over 5, 10, or 20 years.</div>
+      <div class="tool-foot">
+        <div class="tool-status soon"><div class="sdot"></div> Coming Soon</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </div>
+
+    <div class="tool-card coming">
+      <div class="tool-num">04</div>
+      <div class="tool-icon-wrap">🏦</div>
+      <div class="tool-cat">Finance</div>
+      <div class="tool-name">EMI Calculator</div>
+      <div class="tool-desc">Calculate monthly EMI for home, car or personal loans with full amortization schedule and total interest breakdown.</div>
+      <div class="tool-foot">
+        <div class="tool-status soon"><div class="sdot"></div> Coming Soon</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </div>
+
+    <div class="tool-card coming">
+      <div class="tool-num">05</div>
+      <div class="tool-icon-wrap">🏧</div>
+      <div class="tool-cat">Finance</div>
+      <div class="tool-name">FD / RD Maturity Calculator</div>
+      <div class="tool-desc">Know your Fixed Deposit or Recurring Deposit maturity amount with total interest earned across all major Indian banks.</div>
+      <div class="tool-foot">
+        <div class="tool-status soon"><div class="sdot"></div> Coming Soon</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </div>
+
+    <div class="tool-card coming">
+      <div class="tool-num">06</div>
+      <div class="tool-icon-wrap">📊</div>
+      <div class="tool-cat">Finance</div>
+      <div class="tool-name">CAGR Calculator</div>
+      <div class="tool-desc">Measure compounded annual growth rate of any investment. Perfect for comparing mutual funds, stocks and real estate returns.</div>
+      <div class="tool-foot">
+        <div class="tool-status soon"><div class="sdot"></div> Coming Soon</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ornament-divider"><span>✦ ✦ ✦</span></div>
+
+<!-- ══ ABOUT ══ -->
+<section class="about-section" id="about">
+  <div class="about-left">
+    <div class="vintage-frame">
+      <span class="corner-ornament co-tl">✦</span>
+      <span class="corner-ornament co-tr">✦</span>
+      <span class="corner-ornament co-bl">✦</span>
+      <span class="corner-ornament co-br">✦</span>
+      <div class="vf-quote">
+        "The right tool turns <span>confusion</span> into clarity — and clarity into confidence."
+      </div>
+      <div class="vf-rule"></div>
+      <div class="vf-author">— Dynamo Dialects Philosophy</div>
+    </div>
+  </div>
+
+  <div class="about-right">
+    <div class="section-eyebrow">Our Story</div>
+    <h2 class="section-title">Why <em>Dynamo</em><br>Dialects?</h2>
+    <p class="about-text">
+      Born from a simple frustration — too many websites either charge for basic calculators or drown you in ads. Dynamo Dialects was built to fix that, one tool at a time.
+    </p>
+    <p class="about-text">
+      Every calculator here is designed specifically for India — IRCTC rules, Indian Rupee, Indian financial instruments. No generic western tools.
+    </p>
+
+    <div class="about-pillars">
+      <div class="pillar">
+        <div class="pillar-icon">I.</div>
+        <div class="pillar-text">
+          <strong>100% Free, Forever</strong>
+          No subscriptions, no premium tiers, no hidden costs ever.
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">II.</div>
+        <div class="pillar-text">
+          <strong>No Sign-up Required</strong>
+          Open any tool and use it instantly — no account needed.
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">III.</div>
+        <div class="pillar-text">
+          <strong>Built for India</strong>
+          Every tool respects Indian rules, currency and context.
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon">IV.</div>
+        <div class="pillar-text">
+          <strong>Zero Ads</strong>
+          Clean interface, zero distractions — just the tool.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-main">
+    <div>
+      <div class="footer-brand-name">Dynamo <span>Dialects</span></div>
+      <div class="footer-brand-sub">Study Tools & Calculators</div>
+      <p class="footer-about">
+        Free, practical tools for Indian students, investors and travellers. No ads. No sign-ups. Just clarity.
+      </p>
+    </div>
+    <div>
+      <div class="footer-col-title">Tools</div>
+      <div class="footer-links">
+        <a href="railway-calc.html">Railway Calculator</a>
+        <a href="stock-returns.html">Stock Returns</a>
+        <a href="#">SIP Calculator</a>
+        <a href="#">EMI Calculator</a>
+        <a href="#">FD / RD Calculator</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Site</div>
+      <div class="footer-links">
+        <a href="#about">About</a>
+        <a href="#tools">All Tools</a>
+        <a href="mailto:hello@dynamodialects.in">Contact</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 <span>Dynamo Dialects</span> · Built with dedication for Indian learners · Chennai, India</div>
+    <div class="footer-copy">Free forever · No ads · No sign-ups</div>
+  </div>
+</footer>
+
+<script>
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
+  (function animRing(){ rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animRing); })();
+  document.querySelectorAll('a,button').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{ cur.style.transform='translate(-50%,-50%) scale(2.5)'; ring.style.transform='translate(-50%,-50%) scale(1.6)'; ring.style.opacity='0.7'; });
+    el.addEventListener('mouseleave',()=>{ cur.style.transform='translate(-50%,-50%) scale(1)'; ring.style.transform='translate(-50%,-50%) scale(1)'; ring.style.opacity='0.4'; });
+  });
+
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; } });
+  },{threshold:0.08});
+
+  document.querySelectorAll('.tool-card,.vintage-frame,.about-right,.pillar').forEach((el,i)=>{
+    el.style.opacity='0'; el.style.transform='translateY(30px)';
+    el.style.transition=`opacity 0.6s ease ${i*0.08}s, transform 0.6s ease ${i*0.08}s`;
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>
