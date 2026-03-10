@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dynamo Dialects — Free Study Tools & Calculators</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@600;700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #f0f7f2;
+      --bg2:       #e8f5ec;
+      --bg3:       #dff0e5;
+      --ribbon:    #d4eedd;
+      --ribbon2:   #c2e5ce;
+      --paper:     #f5fbf7;
+      --black:     #1c1c1c;
+      --black2:    #2d2d2d;
+      --forest:    #1e5c35;
+      --forest2:   #27734a;
+      --forest3:   #5da878;
+      --forest4:   #0f3d22;
+      --border:    #b8d9c4;
+      --border2:   #8fbfa3;
+      --border-dark: #1c1c1c;
+      --muted:     #4a5a50;
+      --red:       #b83232;
+      --amber:     #b86a00;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--black);
+      font-family: 'Roboto', sans-serif;
+      font-weight: 400;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* subtle dot pattern */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(circle, rgba(30,92,53,0.055) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ══ HEADER ══ */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--paper);
+      border-bottom: 2px solid var(--border-dark);
+      box-shadow: 0 2px 12px rgba(30,92,53,.08);
+    }
+
+    /* Ticker ribbon */
+    .header-ticker {
+      background: var(--ribbon);
+      border-bottom: 1px solid var(--border2);
+      padding: 6px 0; overflow: hidden;
+    }
+    .ticker-inner {
+      display: flex; gap: 48px;
+      animation: ticker 22s linear infinite;
+      width: max-content;
+      font-family: 'Roboto', sans-serif;
+      font-size: .68rem; font-weight: 500;
+      color: var(--forest4); letter-spacing: .06em; text-transform: uppercase;
+    }
+    .ticker-item { white-space: nowrap; }
+    .ticker-dot  { color: var(--forest2); margin: 0 10px; }
+    @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    .header-main {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 48px;
+    }
+
+    .logo { text-decoration: none; display: flex; align-items: center; gap: 4px; }
+    .logo-dynamo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.7rem; color: var(--black);
+      letter-spacing: .08em; line-height: 1;
+    }
+    .logo-dialects {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.7rem; color: var(--forest);
+      letter-spacing: .08em; line-height: 1;
+    }
+    .logo-divider { width: 2px; height: 20px; background: var(--border2); margin: 0 14px; }
+    .logo-sub {
+      font-family: 'Roboto', sans-serif;
+      font-size: .68rem; font-weight: 500;
+      color: var(--muted); letter-spacing: .04em; text-transform: uppercase;
+    }
+
+    nav { display: flex; align-items: center; gap: 32px; }
+    nav a {
+      font-family: 'Roboto', sans-serif;
+      font-size: .78rem; font-weight: 500;
+      color: var(--muted); text-decoration: none;
+      letter-spacing: .04em; text-transform: uppercase;
+      transition: color .2s; position: relative;
+    }
+    nav a::after {
+      content: ''; position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 1.5px; background: var(--forest);
+      transition: width .25s ease;
+    }
+    nav a:hover { color: var(--forest); }
+    nav a:hover::after { width: 100%; }
+
+    .nav-cta {
+      font-family: 'Roboto', sans-serif;
+      font-size: .75rem; font-weight: 600;
+      letter-spacing: .04em; text-transform: uppercase;
+      color: var(--forest) !important; text-decoration: none;
+      border: 1.5px solid var(--forest2);
+      padding: 7px 18px; border-radius: 2px;
+      transition: background .18s, color .18s !important;
+    }
+    .nav-cta::after { display: none !important; }
+    .nav-cta:hover { background: var(--forest) !important; color: var(--paper) !important; }
+
+    /* ══ HERO ══ */
+    .hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      padding: 130px 48px 80px;
+      gap: 64px; align-items: center;
+      position: relative; z-index: 1;
+    }
+
+    /* grid overlay */
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(30,92,53,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30,92,53,.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    .hero-left { position: relative; z-index: 1; }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Roboto', sans-serif;
+      font-size: .72rem; font-weight: 500;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--forest);
+      border: 1px solid rgba(30,92,53,.3);
+      padding: 6px 14px; border-radius: 2px;
+      margin-bottom: 32px;
+      opacity: 0; animation: riseUp .6s ease .1s forwards;
+    }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--forest);
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 7vw, 6.5rem);
+      line-height: .95; letter-spacing: .04em;
+      margin-bottom: 10px;
+      opacity: 0; animation: riseUp .7s ease .25s forwards;
+    }
+    .h-black { color: var(--black); }
+    .h-green { color: var(--forest); }
+    .h-outline {
+      -webkit-text-stroke: 1.5px rgba(30,92,53,.25);
+      color: transparent;
+    }
+
+    .hero-rule {
+      width: 64px; height: 3px;
+      background: linear-gradient(90deg, var(--forest), transparent);
+      margin: 24px 0;
+      opacity: 0; animation: riseUp .6s ease .4s forwards;
+    }
+
+    .hero-desc {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem; font-weight: 300;
+      line-height: 1.8; color: var(--muted);
+      max-width: 460px; margin-bottom: 40px;
+      opacity: 0; animation: riseUp .7s ease .52s forwards;
+    }
+
+    .hero-cta {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      opacity: 0; animation: riseUp .7s ease .64s forwards;
+    }
+    .btn-primary {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.05rem; letter-spacing: .12em;
+      background: var(--forest); color: var(--paper);
+      padding: 13px 30px; border: 2px solid var(--forest);
+      text-decoration: none; border-radius: 2px;
+      transition: background .18s, transform .15s, box-shadow .18s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover {
+      background: var(--forest4); border-color: var(--forest4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(30,92,53,.2);
+    }
+    .btn-secondary {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.05rem; letter-spacing: .12em;
+      background: transparent; color: var(--black);
+      padding: 13px 30px;
+      border: 2px solid var(--border-dark);
+      text-decoration: none; border-radius: 2px;
+      transition: border-color .18s, color .18s;
+    }
+    .btn-secondary:hover { border-color: var(--forest2); color: var(--forest); }
+
+    /* Hero stats */
+    .hero-stats {
+      display: flex; gap: 40px; margin-top: 48px; flex-wrap: wrap;
+      opacity: 0; animation: riseUp .7s ease .76s forwards;
+    }
+    .hstat {}
+    .hstat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem; color: var(--forest); line-height: 1;
+    }
+    .hstat-lbl {
+      font-family: 'Roboto', sans-serif;
+      font-size: .7rem; font-weight: 500;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: .06em; margin-top: 3px;
+    }
+
+    @keyframes riseUp {
+      from { opacity:0; transform:translateY(22px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* Hero right card */
+    .hero-right {
+      position: relative; z-index: 1;
+      opacity: 0; animation: riseUp .8s ease .3s forwards;
+    }
+    .hero-card {
+      background: var(--paper);
+      border: 2px solid var(--border-dark);
+      padding: 40px 36px;
+      position: relative;
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute; top: -1px; left: 28px; right: 28px; height: 3px;
+      background: linear-gradient(90deg, var(--forest), transparent);
+    }
+    .hc-label {
+      font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+      font-size: .6rem; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--forest2); margin-bottom: 18px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .hc-label::after { content:''; flex:1; height:1px; background: var(--border); }
+
+    .hc-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.45rem; letter-spacing: .06em;
+      color: var(--black); margin-bottom: 24px; line-height: 1.15;
+    }
+    .hc-title span { color: var(--forest); }
+
+    .hc-stats {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; background: var(--border); margin-bottom: 24px;
+    }
+    .hc-stat {
+      background: var(--paper);
+      padding: 18px 14px; text-align: center;
+    }
+    .hcs-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem; color: var(--forest); line-height: 1;
+    }
+    .hcs-lbl {
+      font-family: 'Roboto', sans-serif; font-size: .62rem; font-weight: 500;
+      color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
+      margin-top: 5px;
+    }
+
+    .hc-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+    .hc-badge {
+      font-family: 'Roboto', sans-serif; font-size: .65rem; font-weight: 500;
+      letter-spacing: .04em; text-transform: uppercase;
+      border: 1px solid var(--border2);
+      padding: 5px 12px; border-radius: 2px; color: var(--muted);
+    }
+    .hc-badge.active { border-color: rgba(39,115,74,.45); color: var(--forest); background: var(--ribbon); }
+
+    /* ══ MARQUEE ══ */
+    .marquee-wrap {
+      overflow: hidden;
+      border-top: 1px solid var(--border-dark);
+      border-bottom: 1px solid var(--border-dark);
+      background: var(--ribbon);
+      padding: 12px 0;
+      position: relative; z-index: 1;
+    }
+    .marquee-track {
+      display: flex; gap: 40px;
+      animation: marquee 20s linear infinite;
+      width: max-content;
+    }
+    .marquee-item {
+      font-family: 'Roboto', sans-serif;
+      font-size: .7rem; font-weight: 500;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--forest4); white-space: nowrap;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .marquee-item b { color: var(--forest2); font-weight: 700; }
+    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    /* ══ TOOLS SECTION ══ */
+    .tools-section {
+      padding: 96px 48px;
+      position: relative; z-index: 1;
+    }
+
+    .section-header {
+      display: flex; justify-content: space-between;
+      align-items: flex-end; margin-bottom: 56px;
+      flex-wrap: wrap; gap: 24px;
+    }
+    .section-eyebrow {
+      font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+      font-size: .62rem; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--forest2); margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      letter-spacing: .04em; line-height: 1;
+    }
+    .section-title .st-black { color: var(--black); }
+    .section-title .st-green { color: var(--forest); }
+
+    .section-desc {
+      font-family: 'Roboto', sans-serif;
+      font-size: .88rem; font-weight: 400;
+      color: var(--muted); max-width: 320px; line-height: 1.7;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 2px solid var(--border-dark);
+    }
+
+    .tool-card {
+      background: var(--paper);
+      border-right: 1px solid var(--border-dark);
+      border-bottom: 1px solid var(--border-dark);
+      padding: 36px 30px;
+      text-decoration: none; color: inherit;
+      position: relative; overflow: hidden;
+      transition: background .25s;
+      display: flex; flex-direction: column;
+    }
+    .tool-card:nth-child(3n) { border-right: none; }
+    .tool-card:nth-last-child(-n+3) { border-bottom: none; }
+
+    .tool-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--forest), transparent);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .35s ease;
+    }
+    .tool-card:hover { background: var(--bg2); }
+    .tool-card:hover::before { transform: scaleX(1); }
+    .tool-card.coming { opacity: .42; pointer-events: none; }
+
+    .tool-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem; color: rgba(30,92,53,.07);
+      position: absolute; top: 16px; right: 20px;
+      line-height: 1; user-select: none;
+      transition: color .25s;
+    }
+    .tool-card:hover .tool-num { color: rgba(30,92,53,.13); }
+
+    .tool-icon-wrap {
+      width: 50px; height: 50px;
+      border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 24px;
+      background: var(--ribbon); border-radius: 2px;
+      transition: border-color .25s, transform .25s;
+    }
+    .tool-card:hover .tool-icon-wrap {
+      border-color: var(--forest2); transform: rotate(-4deg);
+    }
+
+    .tool-cat {
+      font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+      font-size: .58rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--forest2); margin-bottom: 9px;
+    }
+    .tool-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.15rem; letter-spacing: .05em;
+      color: var(--black); line-height: 1.2; margin-bottom: 12px;
+    }
+    .tool-desc {
+      font-family: 'Roboto', sans-serif;
+      font-size: .8rem; font-weight: 400;
+      color: var(--muted); line-height: 1.65; flex: 1;
+    }
+
+    .tool-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 24px; padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+    .tool-status {
+      font-family: 'Roboto', sans-serif; font-weight: 600;
+      font-size: .62rem; letter-spacing: .04em; text-transform: uppercase;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .sdot { width: 5px; height: 5px; border-radius: 50%; }
+    .live  { color: var(--forest); }
+    .live .sdot { background: var(--forest2); box-shadow: 0 0 5px rgba(39,115,74,.6); }
+    .soon  { color: var(--muted); }
+    .soon .sdot { background: var(--muted); }
+
+    .tool-arr {
+      width: 28px; height: 28px;
+      border: 1.5px solid var(--border2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem; color: var(--muted);
+      transition: all .22s;
+    }
+    .tool-card:hover .tool-arr {
+      background: var(--forest); border-color: var(--forest);
+      color: var(--paper); transform: rotate(45deg);
+    }
+
+    /* ══ ABOUT SECTION ══ */
+    .about-section {
+      padding: 96px 48px;
+      border-top: 1px solid var(--border);
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+      position: relative; z-index: 1;
+    }
+
+    /* Vintage frame */
+    .about-frame {
+      border: 2px solid var(--border-dark);
+      padding: 48px 44px;
+      background: var(--paper);
+      position: relative;
+    }
+    .about-frame::before {
+      content: '';
+      position: absolute; inset: 10px;
+      border: 1px solid rgba(30,92,53,.12);
+      pointer-events: none;
+    }
+    .about-frame::after {
+      content: '❧';
+      position: absolute; top: -14px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.4rem; color: var(--forest);
+      background: var(--paper); padding: 0 12px;
+    }
+    .corner { position: absolute; font-size: .9rem; color: var(--forest); opacity: .3; }
+    .c-tl { top: 4px; left: 4px; }
+    .c-tr { top: 4px; right: 4px; transform: scaleX(-1); }
+    .c-bl { bottom: 4px; left: 4px; transform: scaleY(-1); }
+    .c-br { bottom: 4px; right: 4px; transform: scale(-1); }
+
+    .af-quote {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.55rem; letter-spacing: .04em;
+      color: var(--black); line-height: 1.25; margin-bottom: 20px;
+    }
+    .af-quote span { color: var(--forest); }
+    .af-rule { width: 40px; height: 2px; background: var(--forest2); margin-bottom: 14px; }
+    .af-author {
+      font-family: 'Roboto', sans-serif; font-size: .72rem; font-weight: 500;
+      color: var(--muted); letter-spacing: .08em; text-transform: uppercase;
+    }
+
+    /* About right */
+    .about-right .section-eyebrow { margin-bottom: 10px; }
+    .about-right .section-title   { margin-bottom: 22px; }
+    .about-text {
+      font-family: 'Roboto', sans-serif;
+      font-size: .9rem; font-weight: 400;
+      color: var(--muted); line-height: 1.8; margin-bottom: 14px;
+    }
+
+    .pillars {
+      margin-top: 30px;
+      border: 1.5px solid var(--border);
+      border-radius: 2px; overflow: hidden;
+    }
+    .pillar {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      transition: background .2s;
+    }
+    .pillar:last-child { border-bottom: none; }
+    .pillar:hover { background: var(--bg2); }
+    .pillar-num {
+      font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+      font-size: .72rem; color: var(--forest);
+      min-width: 28px; margin-top: 1px;
+    }
+    .pillar-text {
+      font-family: 'Roboto', sans-serif; font-size: .84rem; font-weight: 400;
+      color: var(--black2); line-height: 1.55;
+    }
+    .pillar-text strong {
+      font-weight: 700; color: var(--black);
+      display: block; margin-bottom: 2px; font-size: .88rem;
+    }
+
+    /* ══ DIVIDER ══ */
+    .divider {
+      text-align: center; padding: 28px;
+      position: relative; z-index: 1;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      position: absolute; top: 50%;
+      width: calc(50% - 70px); height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border));
+    }
+    .divider::before { left: 0; }
+    .divider::after  { right: 0; transform: scaleX(-1); }
+    .divider span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem; color: var(--forest);
+      opacity: .45; letter-spacing: 10px;
+    }
+
+    /* ══ FOOTER ══ */
+    footer {
+      background: var(--black);
+      border-top: 3px solid var(--forest);
+      position: relative; z-index: 1;
+    }
+    .footer-main {
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 56px; padding: 56px 48px 44px;
+    }
+
+    .footer-brand-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem; letter-spacing: .06em; line-height: 1;
+      margin-bottom: 5px;
+    }
+    .fbn-black { color: var(--paper); }
+    .fbn-green { color: #6dcc93; }
+    .footer-brand-sub {
+      font-family: 'Roboto', sans-serif; font-size: .65rem; font-weight: 500;
+      color: #5a6a60; letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .footer-about {
+      font-family: 'Roboto', sans-serif; font-size: .82rem; font-weight: 300;
+      color: #6a7a70; line-height: 1.75; max-width: 280px;
+    }
+
+    .footer-col-title {
+      font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+      font-size: .6rem; letter-spacing: .15em; text-transform: uppercase;
+      color: #6dcc93; margin-bottom: 18px; padding-bottom: 10px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .footer-links { display: flex; flex-direction: column; gap: 12px; }
+    .footer-links a {
+      font-family: 'Roboto', sans-serif; font-size: .84rem; font-weight: 400;
+      color: #6a7a70; text-decoration: none;
+      transition: color .2s;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .footer-links a::before { content: '›'; color: #6dcc93; font-size: 1rem; }
+    .footer-links a:hover { color: #a8d4b8; }
+
+    .footer-bottom {
+      border-top: 1px solid #2a2a2a;
+      padding: 18px 48px;
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 10px;
+    }
+    .footer-copy {
+      font-family: 'Roboto', sans-serif; font-size: .7rem; font-weight: 400;
+      color: #4a5a50; letter-spacing: .03em;
+    }
+    .footer-copy span { color: #6dcc93; font-weight: 500; }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 900px) {
+      .header-main { padding: 12px 20px; }
+      .logo-sub, .logo-divider { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 110px 20px 60px; gap: 40px; }
+      .hero-right { display: none; }
+      .tools-section, .about-section { padding: 60px 20px; }
+      .tools-grid { grid-template-columns: 1fr; }
+      .tool-card { border-right: none; }
+      .about-section { grid-template-columns: 1fr; gap: 40px; }
+      .footer-main { grid-template-columns: 1fr; gap: 36px; padding: 40px 20px; }
+      .footer-bottom { padding: 16px 20px; }
+    }
+
+    /* Scroll reveal */
+    .reveal { opacity:0; transform:translateY(20px); transition: opacity .55s ease, transform .55s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-ticker">
+    <div class="ticker-inner">
+      <span class="ticker-item">Railway Booking Calculator<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Stock Returns Calculator<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">SIP Calculator — Coming Soon<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">EMI Planner — Coming Soon<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">FD / RD Calculator — Coming Soon<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">100% Free · No Sign-up · No Ads<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Railway Booking Calculator<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Stock Returns Calculator<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">SIP Calculator — Coming Soon<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">EMI Planner — Coming Soon<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">FD / RD Calculator — Coming Soon<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">100% Free · No Sign-up · No Ads<span class="ticker-dot">◆</span></span>
+    </div>
+  </div>
+  <div class="header-main">
+    <a href="index.html" class="logo">
+      <span class="logo-dynamo">DYNAMO</span>
+      <span class="logo-dialects">&nbsp;DIALECTS</span>
+      <div class="logo-divider"></div>
+      <span class="logo-sub">Study Tools & Calculators</span>
+    </a>
+    <nav>
+      <a href="#tools">Tools</a>
+      <a href="#about">About</a>
+      <a href="mailto:hello@dynamodialects.in" class="nav-cta">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <span class="live-dot"></span>
+      Free · Open · Always Online
+    </div>
+
+    <h1>
+      <span class="h-black">SHARP</span><br>
+      <span class="h-green">TOOLS</span><br>
+      <span class="h-black">FOR</span><br>
+      <span class="h-outline">SHARPER</span><br>
+      <span class="h-black">MINDS.</span>
+    </h1>
+
+    <div class="hero-rule"></div>
+
+    <p class="hero-desc">
+      Practical, no-nonsense calculators built for Indian students, investors & travellers. From Railway booking windows to stock returns — clarity at your fingertips.
+    </p>
+
+    <div class="hero-cta">
+      <a href="#tools" class="btn-primary">Browse Tools →</a>
+      <a href="#about" class="btn-secondary">Our Mission</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hstat">
+        <div class="hstat-num">10+</div>
+        <div class="hstat-lbl">Tools Planned</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num">₹0</div>
+        <div class="hstat-lbl">Forever Free</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num">0</div>
+        <div class="hstat-lbl">Sign-ups Needed</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-card">
+      <div class="hc-label">Site Overview</div>
+      <div class="hc-title">Built for <span>Real</span> Indian Learners</div>
+      <div class="hc-stats">
+        <div class="hc-stat"><div class="hcs-val">10+</div><div class="hcs-lbl">Tools Planned</div></div>
+        <div class="hc-stat"><div class="hcs-val">₹0</div><div class="hcs-lbl">Cost Forever</div></div>
+        <div class="hc-stat"><div class="hcs-val">0</div><div class="hcs-lbl">Sign-ups Needed</div></div>
+        <div class="hc-stat"><div class="hcs-val">∞</div><div class="hcs-lbl">Uses Allowed</div></div>
+      </div>
+      <div class="hc-badges">
+        <span class="hc-badge active">🚆 Railway</span>
+        <span class="hc-badge active">📈 Stocks</span>
+        <span class="hc-badge">💰 SIP</span>
+        <span class="hc-badge">🏦 EMI</span>
+        <span class="hc-badge">📊 CAGR</span>
+        <span class="hc-badge">🏧 FD / RD</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item">Railway Booking <b>◆</b></div>
+    <div class="marquee-item">Stock Returns <b>◆</b></div>
+    <div class="marquee-item">SIP Calculator <b>◆</b></div>
+    <div class="marquee-item">EMI Planner <b>◆</b></div>
+    <div class="marquee-item">FD Maturity <b>◆</b></div>
+    <div class="marquee-item">CAGR Calculator <b>◆</b></div>
+    <div class="marquee-item">100% Free <b>◆</b></div>
+    <div class="marquee-item">No Ads Ever <b>◆</b></div>
+    <div class="marquee-item">Railway Booking <b>◆</b></div>
+    <div class="marquee-item">Stock Returns <b>◆</b></div>
+    <div class="marquee-item">SIP Calculator <b>◆</b></div>
+    <div class="marquee-item">EMI Planner <b>◆</b></div>
+    <div class="marquee-item">FD Maturity <b>◆</b></div>
+    <div class="marquee-item">CAGR Calculator <b>◆</b></div>
+    <div class="marquee-item">100% Free <b>◆</b></div>
+    <div class="marquee-item">No Ads Ever <b>◆</b></div>
+  </div>
+</div>
+
+<!-- TOOLS -->
+<section class="tools-section" id="tools">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">All Calculators</div>
+      <h2 class="section-title">
+        <span class="st-black">THE </span><span class="st-green">COMPLETE</span><br>
+        <span class="st-black">TOOLBOX</span>
+      </h2>
+    </div>
+    <div class="section-desc">
+      Every tool is built for the Indian context — IRCTC rules, Indian Rupee, Indian financial instruments. No generic western tools.
+    </div>
+  </div>
+
+  <div class="tools-grid">
+
+    <a href="railway-calc.html" class="tool-card">
+      <div class="tool-num">01</div>
+      <div class="tool-icon-wrap">🚆</div>
+      <div class="tool-cat">Travel</div>
+      <div class="tool-name">Railway Reservation Date Calculator</div>
+      <div class="tool-desc">Find exactly when IRCTC advance booking opens for your journey. Never miss the 60-day window or Tatkal timing again.</div>
+      <div class="tool-foot">
+        <div class="tool-status live"><div class="sdot"></div> Live Now</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </a>
+
+    <a href="stock-returns.html" class="tool-card">
+      <div class="tool-num">02</div>
+      <div class="tool-icon-wrap">📈</div>
+      <div class="tool-cat">Finance</div>
+      <div class="tool-name">Stock Returns Calculator</div>
+      <div class="tool-desc">Calculate profit or loss on any stock trade. Enter buy price, sell price and quantity — get instant P&L with percentage returns.</div>
+      <div class="tool-foot">
+        <div class="tool-status live"><div class="sdot"></div> Live Now</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </a>
+
+    <div class="tool-card coming">
+      <div class="tool-num">03</div>
+      <div class="tool-icon-wrap">💰</div>
+      <div class="tool-cat">Finance</div>
+      <div class="tool-name">SIP Calculator</div>
+      <div class="tool-desc">Project the future value of monthly SIP investments. See the real power of compounding over 5, 10 or 20 years.</div>
+      <div class="tool-foot">
+        <div class="tool-status soon"><div class="sdot"></div> Coming Soon</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </div>
+
+    <div class="tool-card coming">
+      <div class="tool-num">04</div>
+      <div class="tool-icon-wrap">🏦</div>
+      <div class="tool-cat">Finance</div>
+      <div class="tool-name">EMI Calculator</div>
+      <div class="tool-desc">Calculate monthly EMI for home, car or personal loans with full amortization schedule and total interest breakdown.</div>
+      <div class="tool-foot">
+        <div class="tool-status soon"><div class="sdot"></div> Coming Soon</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </div>
+
+    <div class="tool-card coming">
+      <div class="tool-num">05</div>
+      <div class="tool-icon-wrap">🏧</div>
+      <div class="tool-cat">Finance</div>
+      <div class="tool-name">FD / RD Maturity Calculator</div>
+      <div class="tool-desc">Find your Fixed or Recurring Deposit maturity amount with total interest across all major Indian banks.</div>
+      <div class="tool-foot">
+        <div class="tool-status soon"><div class="sdot"></div> Coming Soon</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </div>
+
+    <div class="tool-card coming">
+      <div class="tool-num">06</div>
+      <div class="tool-icon-wrap">📊</div>
+      <div class="tool-cat">Finance</div>
+      <div class="tool-name">CAGR Calculator</div>
+      <div class="tool-desc">Measure the compounded annual growth rate of any investment. Compare mutual funds, stocks and real estate returns.</div>
+      <div class="tool-foot">
+        <div class="tool-status soon"><div class="sdot"></div> Coming Soon</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"><span>✦ ✦ ✦</span></div>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="about-frame">
+    <span class="corner c-tl">✦</span>
+    <span class="corner c-tr">✦</span>
+    <span class="corner c-bl">✦</span>
+    <span class="corner c-br">✦</span>
+    <div class="af-quote">
+      "The right tool turns <span>confusion</span> into clarity — and clarity into confidence."
+    </div>
+    <div class="af-rule"></div>
+    <div class="af-author">— Dynamo Dialects Philosophy</div>
+  </div>
+
+  <div class="about-right">
+    <div class="section-eyebrow">Our Story</div>
+    <h2 class="section-title">
+      <span class="st-black">WHY </span><span class="st-green">DYNAMO</span><br>
+      <span class="st-black">DIALECTS?</span>
+    </h2>
+    <p class="about-text">
+      Born from a simple frustration — too many websites either charge for basic calculators or drown you in ads. Dynamo Dialects was built to fix that, one tool at a time.
+    </p>
+    <p class="about-text">
+      Every calculator is designed specifically for India — IRCTC rules, Indian Rupee, Indian financial instruments. No generic western tools.
+    </p>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-num">I.</div>
+        <div class="pillar-text">
+          <strong>100% Free, Forever</strong>
+          No subscriptions, no premium tiers, no hidden costs ever.
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">II.</div>
+        <div class="pillar-text">
+          <strong>No Sign-up Required</strong>
+          Open any tool and use it instantly — no account needed.
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">III.</div>
+        <div class="pillar-text">
+          <strong>Built for India</strong>
+          Every tool respects Indian rules, currency and context.
+        </div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">IV.</div>
+        <div class="pillar-text">
+          <strong>Zero Ads</strong>
+          Clean interface, zero distractions — just the tool.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-main">
+    <div>
+      <div class="footer-brand-name">
+        <span class="fbn-black">DYNAMO </span><span class="fbn-green">DIALECTS</span>
+      </div>
+      <div class="footer-brand-sub">Study Tools & Calculators</div>
+      <p class="footer-about">
+        Free, practical tools for Indian students, investors and travellers. No ads. No sign-ups. Just clarity.
+      </p>
+    </div>
+    <div>
+      <div class="footer-col-title">Tools</div>
+      <div class="footer-links">
+        <a href="railway-calc.html">Railway Calculator</a>
+        <a href="stock-returns.html">Stock Returns</a>
+        <a href="#">SIP Calculator</a>
+        <a href="#">EMI Calculator</a>
+        <a href="#">FD / RD Calculator</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Site</div>
+      <div class="footer-links">
+        <a href="#about">About</a>
+        <a href="#tools">All Tools</a>
+        <a href="mailto:hello@dynamodialects.in">Contact</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 <span>Dynamo Dialects</span> · Built with dedication for Indian learners · Chennai, India</div>
+    <div class="footer-copy">Free forever · No ads · No sign-ups</div>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.tool-card, .about-frame, .about-right, .pillar').forEach((el, i) => {
+    el.classList.add('reveal');
+    el.style.transitionDelay = `${i * 0.07}s`;
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>

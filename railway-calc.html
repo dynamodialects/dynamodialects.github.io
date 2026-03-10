@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Railway Reservation Calculator — Dynamo Dialects</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@600;700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Background palette — white mixed with light green */
+      --bg:        #f0f7f2;      /* main page background: green-tinted white */
+      --bg2:       #e8f5ec;      /* slightly deeper green-white for panels */
+      --bg3:       #dff0e5;      /* card hover / accent bg */
+      --ribbon:    #d4eedd;      /* ribbon/ticker: green shade white */
+      --ribbon2:   #c2e5ce;      /* slightly deeper ribbon */
+      --paper:     #f5fbf7;      /* lightest — almost pure white with green hint */
+
+      /* Text colors */
+      --black:     #1c1c1c;      /* matte black for main text */
+      --black2:    #2d2d2d;      /* slightly lighter matte black */
+      --forest:    #1e5c35;      /* forest green for accents/headings */
+      --forest2:   #27734a;      /* medium forest green */
+      --forest3:   #5da878;      /* lighter forest green for hints */
+      --forest4:   #0f3d22;      /* deep forest green */
+
+      /* Borders */
+      --border:    #b8d9c4;      /* soft green border */
+      --border2:   #8fbfa3;      /* medium green border */
+      --border-dark: #1c1c1c;   /* matte black border */
+
+      /* Status colors */
+      --red:       #b83232;
+      --amber:     #b86a00;
+      --muted:     #4a5a50;      /* muted green-grey text */
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--black);
+      font-family: 'Roboto', sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* Subtle dot pattern on bg */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(circle, rgba(30,92,53,0.06) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ══ UTILITY ══ */
+    .title-font  { font-family: 'Bebas Neue', sans-serif; }
+    .mono-font   { font-family: 'IBM Plex Mono', monospace; font-weight: 700; }
+    .body-font   { font-family: 'Roboto', sans-serif; }
+
+    /* ══ HEADER ══ */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--paper);
+      border-bottom: 2px solid var(--border-dark);
+      box-shadow: 0 2px 12px rgba(30,92,53,0.08);
+    }
+
+    /* Ticker ribbon */
+    .header-ticker {
+      background: var(--ribbon);
+      border-bottom: 1px solid var(--border2);
+      padding: 6px 0; overflow: hidden;
+    }
+    .ticker-inner {
+      display: flex; gap: 48px;
+      animation: ticker 22s linear infinite;
+      width: max-content;
+      font-family: 'Roboto', sans-serif;
+      font-size: .68rem; font-weight: 500;
+      color: var(--forest4); letter-spacing: .06em; text-transform: uppercase;
+    }
+    .ticker-item { white-space: nowrap; }
+    .ticker-dot { color: var(--forest2); margin: 0 10px; }
+    @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    .header-main {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 48px;
+    }
+
+    .logo { text-decoration: none; display: flex; align-items: center; gap: 4px; }
+    .logo-dynamo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.7rem; color: var(--black);
+      letter-spacing: .08em; line-height: 1;
+    }
+    .logo-dialects {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.7rem; color: var(--forest);
+      letter-spacing: .08em; line-height: 1;
+    }
+    .logo-divider {
+      width: 2px; height: 20px; background: var(--border2);
+      margin: 0 14px;
+    }
+    .logo-sub {
+      font-family: 'Roboto', sans-serif;
+      font-size: .68rem; font-weight: 500;
+      color: var(--muted); letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .back-btn {
+      font-family: 'Roboto', sans-serif;
+      font-size: .75rem; font-weight: 600;
+      letter-spacing: .04em; text-transform: uppercase;
+      color: var(--forest); text-decoration: none;
+      border: 1.5px solid var(--forest2);
+      padding: 8px 18px; border-radius: 2px;
+      transition: all .18s ease;
+      display: flex; align-items: center; gap: 7px;
+      background: transparent;
+    }
+    .back-btn:hover { background: var(--forest); color: var(--paper); border-color: var(--forest); }
+
+    /* ══ MAIN ══ */
+    main {
+      padding: 105px 48px 80px;
+      max-width: 1140px; margin: 0 auto;
+      position: relative; z-index: 1;
+    }
+
+    /* ══ PAGE HERO ══ */
+    .page-hero {
+      border: 2px solid var(--border-dark);
+      background: var(--black);
+      color: var(--paper);
+      padding: 52px 56px;
+      position: relative; overflow: hidden;
+      margin-bottom: 0;
+    }
+    .page-hero::before {
+      content: '🚆';
+      position: absolute; right: 56px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 9rem; opacity: .05; pointer-events: none;
+    }
+    /* subtle green dot pattern on dark hero */
+    .page-hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(166,220,186,0.04) 1px, transparent 1px);
+      background-size: 20px 20px;
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Roboto', sans-serif;
+      font-size: .72rem; font-weight: 500;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--forest3);
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-bottom: 20px; position: relative; z-index: 1;
+    }
+    .blink { animation: blink 1s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    .page-hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 6vw, 5.8rem);
+      letter-spacing: .05em; line-height: .95;
+      margin-bottom: 20px;
+      position: relative; z-index: 1;
+    }
+    .page-hero h1 .h-black  { color: var(--paper); }
+    .page-hero h1 .h-green  { color: #6dcc93; }
+
+    .page-hero p {
+      font-family: 'Roboto', sans-serif;
+      font-size: .9rem; font-weight: 300;
+      color: #9ab0a0; line-height: 1.75; max-width: 520px;
+      position: relative; z-index: 1;
+    }
+
+    .hero-badges {
+      display: flex; gap: 10px; margin-top: 28px; flex-wrap: wrap;
+      position: relative; z-index: 1;
+    }
+    .hbadge {
+      font-family: 'Roboto', sans-serif;
+      font-size: .68rem; font-weight: 500;
+      letter-spacing: .04em; text-transform: uppercase;
+      border: 1px solid; padding: 5px 14px; border-radius: 2px;
+    }
+    .hbadge.g { color: #6dcc93; border-color: rgba(109,204,147,.4); }
+    .hbadge.w { color: #6a8070; border-color: rgba(106,128,112,.35); }
+
+    /* ══ TODAY LIVE PANEL ══ */
+    .today-panel {
+      border: 2px solid var(--border-dark);
+      border-top: none;
+      background: var(--paper);
+      overflow: hidden;
+    }
+
+    .today-panel-header {
+      background: var(--ribbon);
+      border-bottom: 1px solid var(--border2);
+      padding: 11px 28px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .tph-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--forest);
+      animation: blink 1s step-end infinite; flex-shrink: 0;
+    }
+    .tph-label {
+      font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+      font-size: .65rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--forest4);
+    }
+    .tph-now {
+      margin-left: auto;
+      font-family: 'Roboto', sans-serif; font-weight: 500;
+      font-size: .65rem; color: var(--forest2); letter-spacing: .04em;
+    }
+
+    .today-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .tblock {
+      padding: 24px 28px;
+      border-right: 1px solid var(--border);
+    }
+    .tblock:last-child { border-right: none; }
+
+    .tblock-label {
+      font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+      font-size: .58rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--forest2); margin-bottom: 10px;
+    }
+
+    .tblock-date {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem; letter-spacing: .05em;
+      color: var(--black); line-height: 1; margin-bottom: 4px;
+    }
+    .tblock-day {
+      font-family: 'Roboto', sans-serif; font-weight: 700;
+      font-size: .78rem; color: var(--forest); margin-bottom: 8px;
+      text-transform: uppercase; letter-spacing: .06em;
+    }
+    .tblock-note {
+      font-family: 'Roboto', sans-serif; font-weight: 400;
+      font-size: .75rem; color: var(--muted); line-height: 1.55;
+    }
+    .tblock-note b { color: var(--black); font-weight: 600; }
+
+    /* Countdown block */
+    .tblock.cd-block { background: var(--bg2); }
+    .live-cd { display: flex; gap: 6px; margin: 4px 0 10px; }
+    .lcd-unit {
+      background: var(--bg3); border: 1px solid var(--border2);
+      padding: 8px 10px; text-align: center; flex: 1; border-radius: 2px;
+    }
+    .lcd-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.55rem; color: var(--forest); line-height: 1; letter-spacing: .04em;
+    }
+    .lcd-lbl {
+      font-family: 'Roboto', sans-serif; font-weight: 500;
+      font-size: .52rem; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--muted); margin-top: 2px;
+    }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Roboto', sans-serif; font-weight: 600;
+      font-size: .65rem; letter-spacing: .04em; text-transform: uppercase;
+      padding: 4px 12px; border: 1.5px solid; border-radius: 20px;
+    }
+    .status-badge.open    { color: var(--forest4); border-color: var(--forest2); background: var(--ribbon); }
+    .status-badge.waiting { color: var(--amber); border-color: var(--amber); background: #fff8ec; }
+    .sdot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+    .next-info-bar {
+      background: var(--ribbon);
+      border-top: 1px solid var(--border2);
+      padding: 13px 28px;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .nib-icon { font-size: .9rem; flex-shrink: 0; margin-top: 1px; }
+    .nib-text {
+      font-family: 'Roboto', sans-serif; font-size: .78rem;
+      color: var(--forest4); line-height: 1.65;
+    }
+    .nib-text b  { font-weight: 700; color: var(--black); }
+    .nib-text em { font-style: normal; color: var(--forest2); font-weight: 500; }
+
+    /* ══ CALCULATOR ══ */
+    .calc-wrapper {
+      display: grid; grid-template-columns: 1fr 1fr;
+      border: 2px solid var(--border-dark); border-top: none;
+    }
+
+    .input-panel {
+      background: var(--paper);
+      border-right: 1px solid var(--border-dark);
+      padding: 44px 40px;
+    }
+    .result-panel {
+      background: var(--bg2);
+      padding: 44px 40px;
+      display: flex; flex-direction: column;
+    }
+
+    .panel-heading {
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 2px solid var(--border-dark);
+      padding-bottom: 14px; margin-bottom: 32px;
+    }
+    .panel-heading-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem; letter-spacing: .1em; color: var(--black);
+    }
+    .panel-heading-badge {
+      font-family: 'Roboto', sans-serif; font-weight: 600;
+      font-size: .62rem; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--forest); border: 1.5px solid var(--forest2);
+      padding: 3px 10px; border-radius: 2px;
+    }
+
+    /* FIELDS */
+    .field { margin-bottom: 26px; }
+    .field-label {
+      font-family: 'Roboto', sans-serif; font-weight: 600;
+      font-size: .75rem; letter-spacing: .05em; text-transform: uppercase;
+      color: var(--black2); margin-bottom: 9px;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .field-label .fl-mark { color: var(--forest); font-family: 'IBM Plex Mono', monospace; font-size: .7rem; }
+    .req { color: var(--forest); }
+
+    input[type="date"], select {
+      width: 100%;
+      background: var(--bg);
+      border: 1.5px solid var(--border2);
+      color: var(--black);
+      font-family: 'Roboto', sans-serif; font-size: .95rem; font-weight: 500;
+      padding: 12px 16px; outline: none;
+      transition: border-color .15s, background .15s;
+      border-radius: 2px;
+      appearance: none; -webkit-appearance: none;
+    }
+    input[type="date"]:focus, select:focus {
+      border-color: var(--forest);
+      background: var(--ribbon);
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.25) sepia(1) saturate(4) hue-rotate(100deg); cursor: pointer;
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%231e5c35'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px;
+    }
+    select option { background: #fff; color: var(--black); }
+
+    .field-hint {
+      font-family: 'Roboto', sans-serif; font-size: .72rem; font-weight: 400;
+      color: var(--forest3); margin-top: 6px; line-height: 1.5;
+    }
+
+    .calc-btn {
+      width: 100%;
+      background: var(--forest); color: var(--paper);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem; letter-spacing: .15em;
+      border: 2px solid var(--forest);
+      padding: 15px 32px; cursor: pointer;
+      transition: background .15s, transform .1s, box-shadow .15s;
+      margin-top: 8px; border-radius: 2px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .calc-btn:hover {
+      background: var(--forest4); border-color: var(--forest4);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(30,92,53,.2);
+    }
+    .calc-btn:active { transform: translateY(0); }
+
+    .tips-box {
+      margin-top: 24px; border: 1.5px dashed var(--border2);
+      padding: 18px 20px; background: var(--ribbon); border-radius: 2px;
+    }
+    .tips-heading {
+      font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+      font-size: .62rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--forest4); margin-bottom: 12px;
+    }
+    .tips-list {
+      font-family: 'Roboto', sans-serif; font-size: .78rem; font-weight: 400;
+      color: var(--forest4); line-height: 2; list-style: none;
+    }
+    .tips-list li { display: flex; gap: 8px; align-items: baseline; }
+    .tips-list li::before { content: '→'; color: var(--forest); font-weight: 700; flex-shrink: 0; }
+
+    /* ══ RESULTS ══ */
+    .empty-state {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; gap: 14px;
+      border: 1.5px dashed var(--border2);
+      padding: 48px 24px; border-radius: 2px;
+    }
+    .empty-icon { font-size: 2.8rem; opacity: .25; }
+    .empty-text {
+      font-family: 'Roboto', sans-serif; font-size: .82rem; font-weight: 400;
+      color: var(--muted); line-height: 1.8;
+    }
+    .empty-text b { color: var(--forest); font-weight: 700; }
+
+    .result-body { display: none; flex-direction: column; gap: 14px; }
+    .result-body.show { display: flex; }
+
+    .journey-banner {
+      background: var(--black); color: var(--paper);
+      padding: 16px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px; border-radius: 2px;
+    }
+    .jb-lbl {
+      font-family: 'Roboto', sans-serif; font-size: .62rem; font-weight: 500;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: #7a9a85; margin-bottom: 4px;
+    }
+    .jb-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.15rem; letter-spacing: .06em; color: var(--paper);
+    }
+    .jb-val.g { color: #6dcc93; }
+
+    .rcard {
+      border: 1.5px solid var(--border);
+      background: var(--paper);
+      padding: 18px 20px;
+      position: relative; border-radius: 2px;
+      transition: border-color .2s;
+    }
+    .rcard:hover { border-color: var(--border2); }
+    .rcard-stripe { position: absolute; top: 0; left: 0; bottom: 0; width: 4px; border-radius: 2px 0 0 2px; }
+    .rcard.general   .rcard-stripe { background: var(--forest2); }
+    .rcard.tatkal-ac .rcard-stripe { background: var(--amber); }
+    .rcard.tatkal-sl .rcard-stripe { background: var(--red); }
+    .rcard-inner { padding-left: 14px; }
+
+    .rcard-type {
+      font-family: 'Roboto', sans-serif; font-weight: 700;
+      font-size: .62rem; letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+    .rcard.general   .rcard-type { color: var(--forest2); }
+    .rcard.tatkal-ac .rcard-type { color: var(--amber); }
+    .rcard.tatkal-sl .rcard-type { color: var(--red); }
+
+    .rcard-date {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.45rem; letter-spacing: .05em;
+      color: var(--black); line-height: 1; margin-bottom: 5px;
+    }
+    .rcard-time {
+      font-family: 'Roboto', sans-serif; font-size: .74rem; font-weight: 400;
+      color: var(--muted); margin-bottom: 5px;
+    }
+    .rcard-time b { color: var(--black); font-weight: 700; }
+    .rcard-note {
+      font-family: 'Roboto', sans-serif; font-size: .7rem; font-weight: 400;
+      color: var(--muted); line-height: 1.5;
+    }
+
+    /* Countdown in result */
+    .countdown-result {
+      background: var(--black); padding: 16px 20px; border-radius: 2px;
+    }
+    .cd-label {
+      font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+      font-size: .6rem; letter-spacing: .1em; text-transform: uppercase;
+      color: #6dcc93; margin-bottom: 12px;
+    }
+    .cd-boxes { display: flex; gap: 6px; }
+    .cdbox {
+      flex: 1; background: #1a1a1a; border: 1px solid #2d2d2d;
+      padding: 10px 6px; text-align: center; border-radius: 2px;
+    }
+    .cdbox-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem; color: #6dcc93; line-height: 1; letter-spacing: .04em;
+    }
+    .cdbox-unit {
+      font-family: 'Roboto', sans-serif; font-weight: 500;
+      font-size: .5rem; letter-spacing: .08em; text-transform: uppercase;
+      color: #555; margin-top: 2px;
+    }
+
+    .copy-btn {
+      width: 100%; background: transparent;
+      border: 1.5px solid var(--forest2);
+      color: var(--forest); font-family: 'Roboto', sans-serif;
+      font-size: .72rem; font-weight: 600;
+      letter-spacing: .06em; text-transform: uppercase;
+      padding: 12px; cursor: pointer; transition: all .15s; border-radius: 2px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .copy-btn:hover { background: var(--forest); color: var(--paper); border-color: var(--forest); }
+    .copy-btn.copied { background: var(--forest); color: var(--paper); border-color: var(--forest); }
+
+    /* ══ RULES SECTION ══ */
+    .rules-header {
+      background: var(--forest);
+      border: 2px solid var(--border-dark); border-top: none;
+      padding: 18px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .rules-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem; letter-spacing: .1em; color: var(--paper);
+    }
+    .rules-subtitle {
+      font-family: 'Roboto', sans-serif; font-size: .68rem; font-weight: 400;
+      color: #a8d4b8; letter-spacing: .04em;
+    }
+
+    .rules-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border-left: 2px solid var(--border-dark);
+      border-right: 2px solid var(--border-dark);
+      border-bottom: 2px solid var(--border-dark);
+    }
+    .rule-card {
+      background: var(--paper);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 24px;
+      transition: background .2s;
+    }
+    .rule-card:hover { background: var(--bg2); }
+    .rule-card:nth-child(3n)      { border-right: none; }
+    .rule-card:nth-last-child(-n+3) { border-bottom: none; }
+
+    .rc-icon { font-size: 1.3rem; margin-bottom: 12px; }
+    .rc-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.05rem; letter-spacing: .07em;
+      color: var(--black); margin-bottom: 8px;
+    }
+    .rc-body {
+      font-family: 'Roboto', sans-serif; font-size: .78rem; font-weight: 400;
+      color: var(--muted); line-height: 1.7;
+    }
+    .rc-badge {
+      display: inline-block; margin-top: 12px;
+      font-family: 'Roboto', sans-serif; font-size: .62rem; font-weight: 600;
+      letter-spacing: .05em; text-transform: uppercase;
+      padding: 4px 12px; border: 1.5px solid; border-radius: 20px;
+    }
+    .rc-badge.g { color: var(--forest4); border-color: var(--forest2); background: var(--ribbon); }
+    .rc-badge.a { color: #6a3800; border-color: var(--amber); background: #fff5e0; }
+    .rc-badge.r { color: #6a1a1a; border-color: var(--red); background: #ffeaea; }
+    .rc-badge.p { color: #3a1a6a; border-color: #7c3aed; background: #f0eaff; }
+
+    .disclaimer {
+      border: 2px solid var(--border-dark); border-top: none;
+      background: var(--ribbon);
+      padding: 18px 28px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .disc-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+    .disc-text {
+      font-family: 'Roboto', sans-serif; font-size: .76rem; font-weight: 400;
+      color: var(--forest4); line-height: 1.7;
+    }
+    .disc-text a { color: var(--forest); font-weight: 600; text-decoration: none; }
+    .disc-text a:hover { text-decoration: underline; }
+
+    /* ══ FOOTER ══ */
+    footer {
+      background: var(--black);
+      border-top: 3px solid var(--forest);
+      padding: 20px 48px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+      position: relative; z-index: 1;
+    }
+    .ft {
+      font-family: 'Roboto', sans-serif; font-size: .7rem; font-weight: 400;
+      color: #5a6a60; letter-spacing: .03em;
+    }
+    .ft span { color: #6dcc93; font-weight: 600; }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 800px) {
+      main { padding: 95px 16px 60px; }
+      .header-main { padding: 12px 16px; }
+      .logo-sub, .logo-divider { display: none; }
+      .page-hero { padding: 36px 24px; }
+      .today-grid { grid-template-columns: 1fr; }
+      .tblock { border-right: none; border-bottom: 1px solid var(--border); }
+      .tblock:last-child { border-bottom: none; }
+      .calc-wrapper { grid-template-columns: 1fr; }
+      .input-panel { border-right: none; border-bottom: 1px solid var(--border-dark); }
+      .input-panel, .result-panel { padding: 28px 20px; }
+      .rules-grid { grid-template-columns: 1fr; }
+      .rule-card { border-right: none; }
+      .rules-header { padding: 16px 20px; }
+      footer { padding: 16px; }
+    }
+
+    .fade-up { opacity:0; transform:translateY(16px); animation:fadeUp .5s ease forwards; }
+    @keyframes fadeUp { to{opacity:1;transform:translateY(0);} }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-ticker">
+    <div class="ticker-inner">
+      <span class="ticker-item">IRCTC ARP: 60 Days<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">General Booking: 8:00 AM IST<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Tatkal AC: 10:00 AM IST<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Tatkal Sleeper: 11:00 AM IST<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">AC 1st Class / Executive: 365 Days ARP<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Rules Effective: 01 Nov 2024<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">IRCTC ARP: 60 Days<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">General Booking: 8:00 AM IST<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Tatkal AC: 10:00 AM IST<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Tatkal Sleeper: 11:00 AM IST<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">AC 1st Class / Executive: 365 Days ARP<span class="ticker-dot">◆</span></span>
+      <span class="ticker-item">Rules Effective: 01 Nov 2024<span class="ticker-dot">◆</span></span>
+    </div>
+  </div>
+  <div class="header-main">
+    <a href="index.html" class="logo">
+      <span class="logo-dynamo">DYNAMO</span>
+      <span class="logo-dialects">&nbsp;DIALECTS</span>
+      <div class="logo-divider"></div>
+      <span class="logo-sub">Railway Tool</span>
+    </a>
+    <a href="index.html" class="back-btn">← All Tools</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <div class="page-hero fade-up">
+    <div class="hero-eyebrow">▶ IRCTC Official Rules Applied &nbsp;<span class="blink">█</span></div>
+    <h1>
+      <span class="h-black">RAILWAY</span><br>
+      <span class="h-green">RESERVATION</span><br>
+      <span class="h-black">CALCULATOR</span>
+    </h1>
+    <p>Find the exact date & time IRCTC booking opens for your train journey. General, Tatkal AC, Tatkal Sleeper — all in one place.</p>
+    <div class="hero-badges">
+      <span class="hbadge g">60-Day ARP</span>
+      <span class="hbadge g">Tatkal Rules</span>
+      <span class="hbadge g">Live Countdown</span>
+      <span class="hbadge w">Updated Nov 2024</span>
+    </div>
+  </div>
+
+  <!-- TODAY LIVE PANEL -->
+  <div class="today-panel fade-up" style="animation-delay:.1s">
+    <div class="today-panel-header">
+      <div class="tph-dot"></div>
+      <span class="tph-label">Today's Advance Reservation — Live Status</span>
+      <span class="tph-now" id="liveClockDisplay">--:-- IST</span>
+    </div>
+
+    <div class="today-grid">
+
+      <div class="tblock">
+        <div class="tblock-label">Today's Booking Opened For</div>
+        <div class="tblock-date" id="todayJourneyDate">—</div>
+        <div class="tblock-day"  id="todayJourneyDay">—</div>
+        <div class="tblock-note">Journey date whose general quota<br>booking opened at <b>8:00 AM IST today</b></div>
+      </div>
+
+      <div class="tblock cd-block">
+        <div class="tblock-label">Time Until / Since 8:00 AM IST</div>
+        <div class="live-cd">
+          <div class="lcd-unit"><div class="lcd-val" id="lcdH">00</div><div class="lcd-lbl">Hrs</div></div>
+          <div class="lcd-unit"><div class="lcd-val" id="lcdM">00</div><div class="lcd-lbl">Min</div></div>
+          <div class="lcd-unit"><div class="lcd-val" id="lcdS">00</div><div class="lcd-lbl">Sec</div></div>
+        </div>
+        <div class="status-badge waiting" id="statusBadge">
+          <div class="sdot"></div>
+          <span id="statusText">Checking...</span>
+        </div>
+      </div>
+
+      <div class="tblock">
+        <div class="tblock-label">Next Booking Opens For</div>
+        <div class="tblock-date" id="nextJourneyDate">—</div>
+        <div class="tblock-day"  id="nextJourneyDay">—</div>
+        <div class="tblock-note" id="nextOpenNote">Booking opens tomorrow at <b>8:00 AM IST</b></div>
+      </div>
+
+    </div>
+
+    <div class="next-info-bar">
+      <span class="nib-icon">ℹ️</span>
+      <span class="nib-text" id="nextInfoText">Loading live status...</span>
+    </div>
+  </div>
+
+  <!-- CALCULATOR -->
+  <div class="calc-wrapper fade-up" style="animation-delay:.18s">
+
+    <!-- INPUT -->
+    <div class="input-panel">
+      <div class="panel-heading">
+        <span class="panel-heading-title">Enter Journey Details</span>
+        <span class="panel-heading-badge">Step 01</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="journeyDate">
+          <span class="fl-mark">//</span> Journey Date <span class="req">*</span>
+        </label>
+        <input type="date" id="journeyDate"/>
+        <div class="field-hint">Select the date you want to travel</div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="trainType">
+          <span class="fl-mark">//</span> Train / Class Type <span class="req">*</span>
+        </label>
+        <select id="trainType">
+          <option value="general">Express / Mail / Superfast (Most Trains)</option>
+          <option value="ac1">AC First Class (1A) / Executive Class (EC)</option>
+          <option value="shortdist">Short Distance / Day Express (30-Day ARP)</option>
+          <option value="tourist">Foreign Tourist Quota (365-Day ARP)</option>
+        </select>
+        <div class="field-hint">AC 1st Class & Executive Class have 365-day ARP</div>
+      </div>
+
+      <button class="calc-btn" onclick="calculate()">CALCULATE BOOKING DATES →</button>
+
+      <div class="tips-box">
+        <div class="tips-heading">// Pro Tips for Fast Booking</div>
+        <ul class="tips-list">
+          <li>Login to IRCTC before 8:00 AM on booking day</li>
+          <li>Save passenger details in your IRCTC profile</li>
+          <li>Keep UPI / saved card ready for fast payment</li>
+          <li>Use IRCTC Rail Connect app for faster checkout</li>
+          <li>Try booking at exactly the opening time</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="result-panel">
+      <div class="panel-heading">
+        <span class="panel-heading-title">Your Booking Schedule</span>
+        <span class="panel-heading-badge">Result</span>
+      </div>
+
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🚆</div>
+        <div class="empty-text">
+          Select your journey date and<br>
+          train type above, then click<br>
+          <b>CALCULATE BOOKING DATES</b>
+        </div>
+      </div>
+
+      <div class="result-body" id="resultBody">
+
+        <div class="journey-banner">
+          <div>
+            <div class="jb-lbl">Your Journey Date</div>
+            <div class="jb-val" id="journeyDisplay">—</div>
+          </div>
+          <div style="text-align:right">
+            <div class="jb-lbl">Days Until Journey</div>
+            <div class="jb-val g" id="daysUntil">—</div>
+          </div>
+        </div>
+
+        <div class="rcard general">
+          <div class="rcard-stripe"></div>
+          <div class="rcard-inner">
+            <div class="rcard-type">General Quota Booking</div>
+            <div class="rcard-date" id="generalDate">—</div>
+            <div class="rcard-time">Opens at <b>8:00 AM IST</b> sharp</div>
+            <div class="rcard-note" id="generalNote">—</div>
+          </div>
+        </div>
+
+        <div class="rcard tatkal-ac" id="tatkalAcCard">
+          <div class="rcard-stripe"></div>
+          <div class="rcard-inner">
+            <div class="rcard-type">Tatkal — AC Classes (1A / 2A / 3A / CC)</div>
+            <div class="rcard-date" id="tatkalAcDate">—</div>
+            <div class="rcard-time">Opens at <b>10:00 AM IST</b> sharp</div>
+            <div class="rcard-note">1 day before journey · Higher fare · No concessions allowed</div>
+          </div>
+        </div>
+
+        <div class="rcard tatkal-sl" id="tatkalSlCard">
+          <div class="rcard-stripe"></div>
+          <div class="rcard-inner">
+            <div class="rcard-type">Tatkal — Non-AC (SL / 2S)</div>
+            <div class="rcard-date" id="tatkalSlDate">—</div>
+            <div class="rcard-time">Opens at <b>11:00 AM IST</b> sharp</div>
+            <div class="rcard-note">1 day before journey · Higher fare · No concessions allowed</div>
+          </div>
+        </div>
+
+        <div class="countdown-result">
+          <div class="cd-label">⏱ Countdown → General Booking Opens</div>
+          <div class="cd-boxes">
+            <div class="cdbox"><div class="cdbox-val" id="cdD">00</div><div class="cdbox-unit">Days</div></div>
+            <div class="cdbox"><div class="cdbox-val" id="cdH">00</div><div class="cdbox-unit">Hours</div></div>
+            <div class="cdbox"><div class="cdbox-val" id="cdM">00</div><div class="cdbox-unit">Mins</div></div>
+            <div class="cdbox"><div class="cdbox-val" id="cdS">00</div><div class="cdbox-unit">Secs</div></div>
+          </div>
+        </div>
+
+        <button class="copy-btn" id="copyBtn" onclick="copyDates()">
+          📋 Copy All Dates to Clipboard
+        </button>
+
+      </div>
+    </div>
+  </div><!-- /calc-wrapper -->
+
+  <!-- RULES -->
+  <div class="fade-up" style="animation-delay:.25s">
+    <div class="rules-header">
+      <div>
+        <div class="rules-title">Official IRCTC Booking Rules</div>
+        <div class="rules-subtitle">Effective November 01, 2024 — Indian Railways</div>
+      </div>
+    </div>
+    <div class="rules-grid">
+      <div class="rule-card">
+        <div class="rc-icon">🟢</div>
+        <div class="rc-title">General Quota (ARP)</div>
+        <div class="rc-body">Booking opens exactly 60 days before journey date at 8:00 AM IST. Applies to Express, Mail and Superfast trains. The journey day itself is not counted.</div>
+        <div class="rc-badge g">60 Days · 8:00 AM IST</div>
+      </div>
+      <div class="rule-card">
+        <div class="rc-icon">🟡</div>
+        <div class="rc-title">Tatkal — AC Classes</div>
+        <div class="rc-body">AC Tatkal (1A, 2A, 3A, CC) opens 1 day before journey at 10:00 AM IST. Tatkal surcharge applies. No senior citizen or other concessions permitted.</div>
+        <div class="rc-badge a">1 Day Before · 10:00 AM IST</div>
+      </div>
+      <div class="rule-card">
+        <div class="rc-icon">🔴</div>
+        <div class="rc-title">Tatkal — Non-AC (SL / 2S)</div>
+        <div class="rc-body">Sleeper and 2nd Sitting Tatkal opens 1 day before journey at 11:00 AM IST — one hour after AC Tatkal. Same surcharge and no concession rules apply.</div>
+        <div class="rc-badge r">1 Day Before · 11:00 AM IST</div>
+      </div>
+      <div class="rule-card">
+        <div class="rc-icon">💜</div>
+        <div class="rc-title">AC 1st Class / Executive</div>
+        <div class="rc-body">AC First Class (1A) and Executive Class (EC) enjoy a 365-day Advance Reservation Period. Book an entire year in advance. Opens at 8:00 AM IST.</div>
+        <div class="rc-badge p">365 Days · 8:00 AM IST</div>
+      </div>
+      <div class="rule-card">
+        <div class="rc-icon">⚡</div>
+        <div class="rc-title">Premium Tatkal</div>
+        <div class="rc-body">Premium Tatkal opens simultaneously with regular Tatkal — 10:00 AM for AC and 11:00 AM for Non-AC. Fares are dynamic and higher. No refund on cancellation.</div>
+        <div class="rc-badge a">Same as Tatkal · Dynamic Fare</div>
+      </div>
+      <div class="rule-card">
+        <div class="rc-icon">📅</div>
+        <div class="rc-title">ARP Rule Change 2024</div>
+        <div class="rc-body">The 60-day ARP replaced the old 120-day ARP from November 1, 2024. All tickets booked before Oct 31, 2024 under the old 120-day rule remain fully valid.</div>
+        <div class="rc-badge g">Effective: 01 Nov 2024</div>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <div class="disc-icon">⚠️</div>
+      <div class="disc-text">
+        This calculator applies official IRCTC rules effective November 1, 2024. Certain special trains, short-distance trains and festival specials may follow different ARP rules. Always verify on the <a href="https://www.irctc.co.in" target="_blank">official IRCTC website</a> before finalising your travel plan. Booking opens at 8:00 AM IST including Sundays and public holidays.
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="ft">© 2025 <span>Dynamo Dialects</span> · Free Tools for Indian Learners · Chennai, India</div>
+  <div class="ft">Data sourced from <span>official Indian Railways / IRCTC</span> guidelines</div>
+</footer>
+
+<script>
+  /* ── HELPERS ── */
+  const DAY  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MON  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const pad  = n => String(n).padStart(2,'0');
+
+  function getIST() {
+    const now = new Date();
+    return new Date(now.getTime() + now.getTimezoneOffset()*60000 + 5.5*3600000);
+  }
+  function addDays(date, n) { const d=new Date(date); d.setDate(d.getDate()+n); return d; }
+  function fmtFull(d) { return `${DAY[d.getDay()]}, ${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}`; }
+  function fmtShort(d){ return `${d.getDate()} ${MONS[d.getMonth()]} ${d.getFullYear()}`; }
+
+  /* ── LIVE PANEL ── */
+  function updateLive() {
+    const ist = getIST();
+    const h12 = ist.getHours()%12||12, ampm = ist.getHours()<12?'AM':'PM';
+    document.getElementById('liveClockDisplay').textContent =
+      `${pad(h12)}:${pad(ist.getMinutes())}:${pad(ist.getSeconds())} ${ampm} IST`;
+
+    const todayIST = new Date(ist.getFullYear(), ist.getMonth(), ist.getDate());
+
+    // Today's journey (opens today = today + 60)
+    const todayJ = addDays(todayIST, 60);
+    document.getElementById('todayJourneyDate').textContent = fmtShort(todayJ);
+    document.getElementById('todayJourneyDay').textContent  = DAY[todayJ.getDay()];
+
+    // 8AM today in IST
+    const open8 = new Date(ist.getFullYear(), ist.getMonth(), ist.getDate(), 8, 0, 0);
+    const diff   = open8 - ist;
+
+    const badge = document.getElementById('statusBadge');
+    const stTxt = document.getElementById('statusText');
+    const infoEl= document.getElementById('nextInfoText');
+
+    const abs  = Math.abs(diff);
+    const hrs  = Math.floor(abs/3600000);
+    const mins = Math.floor((abs%3600000)/60000);
+    const secs = Math.floor((abs%60000)/1000);
+
+    document.getElementById('lcdH').textContent = pad(hrs);
+    document.getElementById('lcdM').textContent = pad(mins);
+    document.getElementById('lcdS').textContent = pad(secs);
+
+    if (diff > 0) {
+      badge.className = 'status-badge waiting';
+      stTxt.textContent = 'Opens in...';
+      infoEl.innerHTML = `Today's booking window for <b>${fmtShort(todayJ)} (${DAY[todayJ.getDay()]})</b> opens at <b>8:00 AM IST</b> — <em>${hrs}h ${mins}m ${secs}s remaining</em>`;
+    } else {
+      badge.className = 'status-badge open';
+      stTxt.textContent = 'Booking Open!';
+      infoEl.innerHTML = `Today's booking for <b>${fmtShort(todayJ)} (${DAY[todayJ.getDay()]})</b> opened <em>${hrs}h ${mins}m ago</em> at 8:00 AM IST. Next slot opens <b>tomorrow at 8:00 AM IST</b>.`;
+    }
+
+    // Next opening = tomorrow's journey (todayIST + 61)
+    const tomorrowIST = addDays(todayIST, 1);
+    const nextJ       = addDays(todayIST, 61);
+    document.getElementById('nextJourneyDate').textContent = fmtShort(nextJ);
+    document.getElementById('nextJourneyDay').textContent  = DAY[nextJ.getDay()];
+    document.getElementById('nextOpenNote').innerHTML =
+      `Booking opens on <b>${DAY[tomorrowIST.getDay()]}, ${fmtShort(tomorrowIST)}</b><br>at <b>8:00 AM IST</b>`;
+  }
+  updateLive();
+  setInterval(updateLive, 1000);
+
+  /* ── CALCULATOR ── */
+  const todayLocal = new Date();
+  document.getElementById('journeyDate').min = todayLocal.toISOString().split('T')[0];
+
+  let cdTimer = null;
+  function startCD(bookingDate) {
+    if (cdTimer) clearInterval(cdTimer);
+    function tick() {
+      const ist    = getIST();
+      const target = new Date(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate(), 8,0,0);
+      const now2   = new Date(ist.getFullYear(), ist.getMonth(), ist.getDate(), ist.getHours(), ist.getMinutes(), ist.getSeconds());
+      const diff   = target - now2;
+      if (diff <= 0) { ['cdD','cdH','cdM','cdS'].forEach(id=>document.getElementById(id).textContent='00'); return; }
+      document.getElementById('cdD').textContent = pad(Math.floor(diff/86400000));
+      document.getElementById('cdH').textContent = pad(Math.floor((diff%86400000)/3600000));
+      document.getElementById('cdM').textContent = pad(Math.floor((diff%3600000)/60000));
+      document.getElementById('cdS').textContent = pad(Math.floor((diff%60000)/1000));
+    }
+    tick(); cdTimer = setInterval(tick, 1000);
+  }
+
+  function calculate() {
+    const raw  = document.getElementById('journeyDate').value;
+    const type = document.getElementById('trainType').value;
+    if (!raw) { alert('Please select a journey date.'); return; }
+
+    const [y,mo,d] = raw.split('-').map(Number);
+    const journey  = new Date(y, mo-1, d);
+    const ist      = getIST();
+    const todayMid = new Date(ist.getFullYear(), ist.getMonth(), ist.getDate());
+    const daysLeft = Math.ceil((journey - todayMid)/86400000);
+    if (daysLeft <= 0) { alert('Please select a future journey date.'); return; }
+
+    let arp = 60;
+    if (type==='ac1'||type==='tourist') arp=365;
+    if (type==='shortdist') arp=30;
+
+    const genDate    = addDays(journey, -arp);
+    const tatkalDate = addDays(journey, -1);
+
+    document.getElementById('journeyDisplay').textContent = fmtFull(journey);
+    document.getElementById('daysUntil').textContent      = daysLeft + ' days';
+    document.getElementById('generalDate').textContent    = fmtFull(genDate);
+    document.getElementById('tatkalAcDate').textContent   = fmtFull(tatkalDate);
+    document.getElementById('tatkalSlDate').textContent   = fmtFull(tatkalDate);
+
+    const notes = {
+      general:  `60-day Advance Reservation Period · Opens at 8:00 AM IST`,
+      ac1:      `AC First Class / Executive Class — Special 365-day ARP`,
+      shortdist:`Short Distance / Day Express — 30-day ARP applies`,
+      tourist:  `Foreign Tourist Quota — 365-day ARP applies`
+    };
+    document.getElementById('generalNote').textContent = notes[type];
+
+    const isAC1 = type==='ac1';
+    ['tatkalAcCard','tatkalSlCard'].forEach(id=>{
+      const el = document.getElementById(id);
+      el.style.opacity = isAC1 ? '0.35' : '1';
+      if (isAC1) el.querySelector('.rcard-note').textContent = 'Tatkal not typically available for this class';
+    });
+
+    startCD(genDate);
+
+    document.getElementById('emptyState').style.display = 'none';
+    const rb = document.getElementById('resultBody');
+    rb.classList.add('show');
+    rb.style.opacity='0'; rb.style.transform='translateY(10px)';
+    rb.style.transition='opacity .4s ease,transform .4s ease';
+    setTimeout(()=>{ rb.style.opacity='1'; rb.style.transform='translateY(0)'; }, 30);
+  }
+
+  function copyDates() {
+    const jd=document.getElementById('journeyDisplay').textContent;
+    const gd=document.getElementById('generalDate').textContent;
+    const td=document.getElementById('tatkalAcDate').textContent;
+    const txt=`🚆 IRCTC Booking Dates — Dynamo Dialects\n\nJourney Date        : ${jd}\n\n✅ General Booking Opens : ${gd} @ 8:00 AM IST\n🟡 Tatkal AC Opens       : ${td} @ 10:00 AM IST\n🔴 Tatkal Sleeper Opens  : ${td} @ 11:00 AM IST\n\nBook at: irctc.co.in\nCalculated by: dynamodialects.github.io`;
+    navigator.clipboard.writeText(txt).then(()=>{
+      const btn=document.getElementById('copyBtn');
+      btn.textContent='✅ Copied to Clipboard!'; btn.classList.add('copied');
+      setTimeout(()=>{ btn.textContent='📋 Copy All Dates to Clipboard'; btn.classList.remove('copied'); },2500);
+    });
+  }
+
+  document.getElementById('journeyDate').addEventListener('keydown',e=>{ if(e.key==='Enter') calculate(); });
+
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; }});
+  },{threshold:.08});
+  document.querySelectorAll('.rule-card').forEach((el,i)=>{
+    el.style.opacity='0'; el.style.transform='translateY(18px)';
+    el.style.transition=`opacity .5s ease ${i*.06}s,transform .5s ease ${i*.06}s`;
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>
