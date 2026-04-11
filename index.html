@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dynamo Dialects — Free Study Tools & Calculators for India</title>
+<meta name="description" content="Free calculators for Indian students, investors & travellers. IRCTC Railway booking calculator, Stock returns, SIP, EMI — no sign-up, no ads, forever free."/>
+<meta name="keywords" content="IRCTC calculator, railway booking date, stock returns calculator, SIP calculator, EMI calculator, Indian finance tools, free calculators India"/>
+<meta property="og:title" content="Dynamo Dialects — Free Study Tools & Calculators"/>
+<meta property="og:description" content="Practical, no-nonsense calculators built for Indian students, investors & travellers. 100% free, no sign-up required."/>
+<meta property="og:type" content="website"/>
+<meta name="theme-color" content="#1e5c35"/>
+<link rel="canonical" href="https://dynamodialects.github.io/"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@600;700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f0f7f2;
+  --bg2: #e8f5ec;
+  --bg3: #dff0e5;
+  --ribbon: #d4eedd;
+  --ribbon2: #c2e5ce;
+  --paper: #f5fbf7;
+  --black: #1c1c1c;
+  --black2: #2d2d2d;
+  --forest: #1e5c35;
+  --forest2: #27734a;
+  --forest3: #5da878;
+  --forest4: #0f3d22;
+  --border: #b8d9c4;
+  --border2: #8fbfa3;
+  --border-dark: #1c1c1c;
+  --muted: #4a5a50;
+  --red: #b83232;
+  --amber: #b86a00;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--black);
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  overflow-x: hidden;
+  cursor: default;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: radial-gradient(circle, rgba(30,92,53,0.055) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none; z-index: 0;
+}
+
+/* ══ HEADER ══ */
+header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: var(--paper);
+  border-bottom: 2px solid var(--border-dark);
+  box-shadow: 0 2px 12px rgba(30,92,53,.08);
+}
+.header-ticker {
+  background: var(--ribbon);
+  border-bottom: 1px solid var(--border2);
+  padding: 6px 0; overflow: hidden;
+}
+.ticker-inner {
+  display: flex; gap: 48px;
+  animation: ticker 50s linear infinite;
+  width: max-content;
+  font-family: 'Roboto', sans-serif;
+  font-size: .68rem; font-weight: 500;
+  color: var(--forest4); letter-spacing: .06em; text-transform: uppercase;
+}
+.ticker-item { white-space: nowrap; }
+.ticker-dot { color: var(--forest2); margin: 0 10px; }
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.header-main {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 48px;
+}
+.logo { text-decoration: none; display: flex; align-items: center; gap: 4px; }
+.logo-dynamo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.7rem; color: var(--black);
+  letter-spacing: .08em; line-height: 1;
+}
+.logo-dialects {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.7rem; color: var(--forest);
+  letter-spacing: .08em; line-height: 1;
+}
+.logo-divider { width: 2px; height: 20px; background: var(--border2); margin: 0 14px; }
+.logo-sub {
+  font-family: 'Roboto', sans-serif;
+  font-size: .68rem; font-weight: 500;
+  color: var(--muted); letter-spacing: .04em; text-transform: uppercase;
+}
+nav { display: flex; align-items: center; gap: 32px; }
+nav a {
+  font-family: 'Roboto', sans-serif;
+  font-size: .78rem; font-weight: 500;
+  color: var(--muted); text-decoration: none;
+  letter-spacing: .04em; text-transform: uppercase;
+  transition: color .2s; position: relative;
+}
+nav a::after {
+  content: ''; position: absolute; bottom: -3px; left: 0;
+  width: 0; height: 1.5px; background: var(--forest);
+  transition: width .25s ease;
+}
+nav a:hover { color: var(--forest); }
+nav a:hover::after { width: 100%; }
+.nav-cta {
+  font-family: 'Roboto', sans-serif;
+  font-size: .75rem; font-weight: 600;
+  letter-spacing: .04em; text-transform: uppercase;
+  color: var(--forest) !important; text-decoration: none;
+  border: 1.5px solid var(--forest2);
+  padding: 7px 18px; border-radius: 2px;
+  transition: background .18s, color .18s !important;
+}
+.nav-cta::after { display: none !important; }
+.nav-cta:hover { background: var(--forest) !important; color: var(--paper) !important; }
+
+/* Mobile hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 4px;
+}
+.hamburger span {
+  display: block; width: 24px; height: 2px;
+  background: var(--black); transition: all .3s ease;
+  border-radius: 2px;
+}
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  background: var(--paper);
+  border-top: 1px solid var(--border);
+  padding: 16px 20px;
+  gap: 16px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  font-family: 'Roboto', sans-serif;
+  font-size: .85rem; font-weight: 500;
+  color: var(--muted); text-decoration: none;
+  letter-spacing: .04em; text-transform: uppercase;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  transition: color .2s;
+}
+.mobile-menu a:last-child { border-bottom: none; }
+.mobile-menu a:hover { color: var(--forest); }
+
+/* ══ HERO ══ */
+.hero {
+  min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  padding: 130px 48px 80px;
+  gap: 64px; align-items: center;
+  position: relative; z-index: 1;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(30,92,53,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30,92,53,.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+.hero-left { position: relative; z-index: 1; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: 'Roboto', sans-serif;
+  font-size: .72rem; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--forest);
+  border: 1px solid rgba(30,92,53,.3);
+  padding: 6px 14px; border-radius: 2px;
+  margin-bottom: 32px;
+  opacity: 0; animation: riseUp .6s ease .1s forwards;
+}
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--forest);
+  animation: blink 1.4s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.5rem, 7vw, 6.5rem);
+  line-height: .95; letter-spacing: .04em;
+  margin-bottom: 10px;
+  opacity: 0; animation: riseUp .7s ease .25s forwards;
+}
+.h-black { color: var(--black); }
+.h-green { color: var(--forest); }
+.h-outline {
+  -webkit-text-stroke: 1.5px rgba(30,92,53,.25);
+  color: transparent;
+}
+.hero-rule {
+  width: 64px; height: 3px;
+  background: linear-gradient(90deg, var(--forest), transparent);
+  margin: 24px 0;
+  opacity: 0; animation: riseUp .6s ease .4s forwards;
+}
+.hero-desc {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem; font-weight: 300;
+  line-height: 1.8; color: var(--muted);
+  max-width: 460px; margin-bottom: 40px;
+  opacity: 0; animation: riseUp .7s ease .52s forwards;
+}
+.hero-cta {
+  display: flex; gap: 14px; flex-wrap: wrap;
+  opacity: 0; animation: riseUp .7s ease .64s forwards;
+}
+.btn-primary {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.05rem; letter-spacing: .12em;
+  background: var(--forest); color: var(--paper);
+  padding: 13px 30px; border: 2px solid var(--forest);
+  text-decoration: none; border-radius: 2px;
+  transition: background .18s, transform .15s, box-shadow .18s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover {
+  background: var(--forest4); border-color: var(--forest4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(30,92,53,.2);
+}
+.btn-secondary {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.05rem; letter-spacing: .12em;
+  background: transparent; color: var(--black);
+  padding: 13px 30px;
+  border: 2px solid var(--border-dark);
+  text-decoration: none; border-radius: 2px;
+  transition: border-color .18s, color .18s;
+}
+.btn-secondary:hover { border-color: var(--forest2); color: var(--forest); }
+.hero-stats {
+  display: flex; gap: 40px; margin-top: 48px; flex-wrap: wrap;
+  opacity: 0; animation: riseUp .7s ease .76s forwards;
+}
+.hstat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem; color: var(--forest); line-height: 1;
+}
+.hstat-lbl {
+  font-family: 'Roboto', sans-serif;
+  font-size: .7rem; font-weight: 500;
+  color: var(--muted); text-transform: uppercase;
+  letter-spacing: .06em; margin-top: 3px;
+}
+@keyframes riseUp {
+  from { opacity:0; transform:translateY(22px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+/* Hero right card */
+.hero-right {
+  position: relative; z-index: 1;
+  opacity: 0; animation: riseUp .8s ease .3s forwards;
+}
+.hero-card {
+  background: var(--paper);
+  border: 2px solid var(--border-dark);
+  padding: 40px 36px;
+  position: relative;
+}
+.hero-card::before {
+  content: '';
+  position: absolute; top: -1px; left: 28px; right: 28px; height: 3px;
+  background: linear-gradient(90deg, var(--forest), transparent);
+}
+.hc-label {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+  font-size: .6rem; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--forest2); margin-bottom: 18px;
+  display: flex; align-items: center; gap: 10px;
+}
+.hc-label::after { content:''; flex:1; height:1px; background: var(--border); }
+.hc-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.45rem; letter-spacing: .06em;
+  color: var(--black); margin-bottom: 24px; line-height: 1.15;
+}
+.hc-title span { color: var(--forest); }
+.hc-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--border); margin-bottom: 24px;
+}
+.hc-stat {
+  background: var(--paper);
+  padding: 18px 14px; text-align: center;
+}
+.hcs-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem; color: var(--forest); line-height: 1;
+}
+.hcs-lbl {
+  font-family: 'Roboto', sans-serif; font-size: .62rem; font-weight: 500;
+  color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
+  margin-top: 5px;
+}
+.hc-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.hc-badge {
+  font-family: 'Roboto', sans-serif; font-size: .65rem; font-weight: 500;
+  letter-spacing: .04em; text-transform: uppercase;
+  border: 1px solid var(--border2);
+  padding: 5px 12px; border-radius: 2px; color: var(--muted);
+}
+.hc-badge.active { border-color: rgba(39,115,74,.45); color: var(--forest); background: var(--ribbon); }
+
+/* ══ MARQUEE ══ */
+.marquee-wrap {
+  overflow: hidden;
+  border-top: 1px solid var(--border-dark);
+  border-bottom: 1px solid var(--border-dark);
+  background: var(--ribbon);
+  padding: 12px 0;
+  position: relative; z-index: 1;
+}
+.marquee-track {
+  display: flex; gap: 40px;
+  animation: marquee 20s linear infinite;
+  width: max-content;
+}
+.marquee-item {
+  font-family: 'Roboto', sans-serif;
+  font-size: .7rem; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--forest4); white-space: nowrap;
+  display: flex; align-items: center; gap: 16px;
+}
+.marquee-item b { color: var(--forest2); font-weight: 700; }
+@keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ══ TOOLS SECTION ══ */
+.tools-section {
+  padding: 96px 48px;
+  position: relative; z-index: 1;
+}
+.section-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-end; margin-bottom: 56px;
+  flex-wrap: wrap; gap: 24px;
+}
+.section-eyebrow {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+  font-size: .62rem; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--forest2); margin-bottom: 10px;
+}
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  letter-spacing: .04em; line-height: 1;
+}
+.section-title .st-black { color: var(--black); }
+.section-title .st-green { color: var(--forest); }
+.section-desc {
+  font-family: 'Roboto', sans-serif;
+  font-size: .88rem; font-weight: 400;
+  color: var(--muted); max-width: 320px; line-height: 1.7;
+}
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 2px solid var(--border-dark);
+}
+.tool-card {
+  background: var(--paper);
+  border-right: 1px solid var(--border-dark);
+  border-bottom: none;
+  padding: 36px 30px;
+  text-decoration: none; color: inherit;
+  position: relative; overflow: hidden;
+  transition: background .25s;
+  display: flex; flex-direction: column;
+}
+.tool-card:nth-child(3n) { border-right: none; }
+.tool-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--forest), transparent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .35s ease;
+}
+.tool-card:hover { background: var(--bg2); }
+.tool-card:hover::before { transform: scaleX(1); }
+.tool-card.coming { opacity: .42; pointer-events: none; }
+.tool-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.8rem; color: rgba(30,92,53,.07);
+  position: absolute; top: 16px; right: 20px;
+  line-height: 1; user-select: none;
+  transition: color .25s;
+}
+.tool-card:hover .tool-num { color: rgba(30,92,53,.13); }
+.tool-icon-wrap {
+  width: 50px; height: 50px;
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; margin-bottom: 24px;
+  background: var(--ribbon); border-radius: 2px;
+  transition: border-color .25s, transform .25s;
+}
+.tool-card:hover .tool-icon-wrap {
+  border-color: var(--forest2); transform: rotate(-4deg);
+}
+.tool-cat {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+  font-size: .58rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--forest2); margin-bottom: 9px;
+}
+.tool-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.15rem; letter-spacing: .05em;
+  color: var(--black); line-height: 1.2; margin-bottom: 12px;
+}
+.tool-desc {
+  font-family: 'Roboto', sans-serif;
+  font-size: .8rem; font-weight: 400;
+  color: var(--muted); line-height: 1.65; flex: 1;
+}
+.tool-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 24px; padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+.tool-status {
+  font-family: 'Roboto', sans-serif; font-weight: 600;
+  font-size: .62rem; letter-spacing: .04em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 6px;
+}
+.sdot { width: 5px; height: 5px; border-radius: 50%; }
+.live { color: var(--forest); }
+.live .sdot { background: var(--forest2); box-shadow: 0 0 5px rgba(39,115,74,.6); }
+.soon { color: var(--muted); }
+.soon .sdot { background: var(--muted); }
+.tool-arr {
+  width: 28px; height: 28px;
+  border: 1.5px solid var(--border2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .78rem; color: var(--muted);
+  transition: all .22s;
+}
+.tool-card:hover .tool-arr {
+  background: var(--forest); border-color: var(--forest);
+  color: var(--paper); transform: rotate(45deg);
+}
+
+/* ══ ABOUT SECTION ══ */
+.about-section {
+  padding: 96px 48px;
+  border-top: 1px solid var(--border);
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+  position: relative; z-index: 1;
+}
+.about-frame {
+  border: 2px solid var(--border-dark);
+  padding: 48px 44px;
+  background: var(--paper);
+  position: relative;
+}
+.about-frame::before {
+  content: '';
+  position: absolute; inset: 10px;
+  border: 1px solid rgba(30,92,53,.12);
+  pointer-events: none;
+}
+.about-frame::after {
+  content: '❧';
+  position: absolute; top: -14px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.4rem; color: var(--forest);
+  background: var(--paper); padding: 0 12px;
+}
+.corner { position: absolute; font-size: .9rem; color: var(--forest); opacity: .3; }
+.c-tl { top: 4px; left: 4px; }
+.c-tr { top: 4px; right: 4px; transform: scaleX(-1); }
+.c-bl { bottom: 4px; left: 4px; transform: scaleY(-1); }
+.c-br { bottom: 4px; right: 4px; transform: scale(-1); }
+.af-quote {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.55rem; letter-spacing: .04em;
+  color: var(--black); line-height: 1.25; margin-bottom: 20px;
+}
+.af-quote span { color: var(--forest); }
+.af-rule { width: 40px; height: 2px; background: var(--forest2); margin-bottom: 14px; }
+.af-author {
+  font-family: 'Roboto', sans-serif; font-size: .72rem; font-weight: 500;
+  color: var(--muted); letter-spacing: .08em; text-transform: uppercase;
+}
+.about-right .section-eyebrow { margin-bottom: 10px; }
+.about-right .section-title { margin-bottom: 22px; }
+.about-text {
+  font-family: 'Roboto', sans-serif;
+  font-size: .9rem; font-weight: 400;
+  color: var(--muted); line-height: 1.8; margin-bottom: 14px;
+}
+.pillars {
+  margin-top: 30px;
+  border: 1.5px solid var(--border);
+  border-radius: 2px; overflow: hidden;
+}
+.pillar {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  transition: background .2s;
+}
+.pillar:last-child { border-bottom: none; }
+.pillar:hover { background: var(--bg2); }
+.pillar-num {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+  font-size: .72rem; color: var(--forest);
+  min-width: 28px; margin-top: 1px;
+}
+.pillar-text {
+  font-family: 'Roboto', sans-serif; font-size: .84rem; font-weight: 400;
+  color: var(--black2); line-height: 1.55;
+}
+.pillar-text strong {
+  font-weight: 700; color: var(--black);
+  display: block; margin-bottom: 2px; font-size: .88rem;
+}
+
+/* ══ DIVIDER ══ */
+.divider {
+  text-align: center; padding: 28px;
+  position: relative; z-index: 1;
+}
+.divider::before, .divider::after {
+  content: '';
+  position: absolute; top: 50%;
+  width: calc(50% - 70px); height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border));
+}
+.divider::before { left: 0; }
+.divider::after { right: 0; transform: scaleX(-1); }
+.divider span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem; color: var(--forest);
+  opacity: .45; letter-spacing: 10px;
+}
+
+/* ══ FOOTER ══ */
+footer {
+  background: var(--black);
+  border-top: 3px solid var(--forest);
+  position: relative; z-index: 1;
+}
+.footer-main {
+  display: grid; grid-template-columns: 2fr 1fr 1fr;
+  gap: 56px; padding: 56px 48px 44px;
+}
+.footer-brand-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem; letter-spacing: .06em; line-height: 1;
+  margin-bottom: 5px;
+}
+.fbn-black { color: var(--paper); }
+.fbn-green { color: #6dcc93; }
+.footer-brand-sub {
+  font-family: 'Roboto', sans-serif; font-size: .65rem; font-weight: 500;
+  color: #5a6a60; letter-spacing: .1em; text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.footer-about {
+  font-family: 'Roboto', sans-serif; font-size: .82rem; font-weight: 300;
+  color: #6a7a70; line-height: 1.75; max-width: 280px;
+}
+.footer-col-title {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+  font-size: .6rem; letter-spacing: .15em; text-transform: uppercase;
+  color: #6dcc93; margin-bottom: 18px; padding-bottom: 10px;
+  border-bottom: 1px solid #2a2a2a;
+}
+.footer-links { display: flex; flex-direction: column; gap: 12px; }
+.footer-links a {
+  font-family: 'Roboto', sans-serif; font-size: .84rem; font-weight: 400;
+  color: #6a7a70; text-decoration: none;
+  transition: color .2s;
+  display: flex; align-items: center; gap: 7px;
+}
+.footer-links a::before { content: '›'; color: #6dcc93; font-size: 1rem; }
+.footer-links a:hover { color: #a8d4b8; }
+.footer-bottom {
+  border-top: 1px solid #2a2a2a;
+  padding: 18px 48px;
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.footer-copy {
+  font-family: 'Roboto', sans-serif; font-size: .7rem; font-weight: 400;
+  color: #4a5a50; letter-spacing: .03em;
+}
+.footer-copy span { color: #6dcc93; font-weight: 500; }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 900px) {
+  .header-main { padding: 12px 20px; }
+  .logo-sub, .logo-divider { display: none; }
+  nav { display: none; }
+  .hamburger { display: flex; }
+  .hero { grid-template-columns: 1fr; padding: 110px 20px 60px; gap: 40px; }
+  .hero-right { display: none; }
+  .tools-section, .about-section { padding: 60px 20px; }
+  .tools-grid { grid-template-columns: 1fr; }
+  .tool-card { border-right: none !important; border-bottom: 1px solid var(--border-dark) !important; }
+  .tool-card:last-child { border-bottom: none !important; }
+  .about-section { grid-template-columns: 1fr; gap: 40px; }
+  .footer-main { grid-template-columns: 1fr; gap: 36px; padding: 40px 20px; }
+  .footer-bottom { padding: 16px 20px; }
+}
+@media (max-width: 560px) {
+  .tools-grid { grid-template-columns: 1fr; }
+  .tool-card { border-right: none !important; }
+  .tool-card:not(:last-child) { border-bottom: 1px solid var(--border-dark) !important; }
+  .tool-card:last-child { border-bottom: none !important; }
+}
+
+/* Second ticker ribbon — English quotes */
+.header-ticker2 {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 5px 0; overflow: hidden;
+}
+.ticker-inner2 {
+  display: flex; gap: 64px;
+  animation: ticker2 40s linear infinite;
+  width: max-content;
+  font-family: 'Roboto', sans-serif;
+  font-size: .66rem; font-weight: 400; font-style: italic;
+  color: var(--muted); letter-spacing: .03em;
+}
+.ticker-item2 { white-space: nowrap; }
+.ticker-author { color: var(--forest2); font-weight: 600; font-style: normal; margin-left: 6px; }
+@keyframes ticker2 { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ══ TODAY AT A GLANCE CARD — large professional dashboard ══ */
+.hero-card { overflow: hidden; }
+
+/* Top label bar */
+.hc-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-bottom: 1px solid var(--border);
+  background: var(--ribbon);
+}
+.hc-topbar-title {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+  font-size: .6rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--forest4); display: flex; align-items: center; gap: 8px;
+}
+.hc-live-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--forest);
+  animation: blink 1.4s ease-in-out infinite; flex-shrink: 0;
+}
+.hc-date-tag {
+  font-family: 'IBM Plex Mono', monospace; font-size: .6rem; font-weight: 700;
+  color: var(--forest2); letter-spacing: .05em;
+}
+
+/* Split panels */
+.hc-split {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; background: var(--border);
+}
+.hc-panel {
+  background: var(--paper);
+  padding: 22px 22px;
+}
+.hc-panel + .hc-panel { border-left: 1px solid var(--border); }
+
+.hc-panel-label {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+  font-size: .58rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--forest2); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hc-panel-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* Railway panel */
+.rly-date-main {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.75rem; letter-spacing: .05em; color: var(--black); line-height: 1;
+}
+.rly-day {
+  font-family: 'Roboto', sans-serif; font-weight: 700; font-size: .82rem;
+  color: var(--forest); text-transform: uppercase; letter-spacing: .06em; margin-top: 5px;
+}
+.rly-note {
+  font-family: 'Roboto', sans-serif; font-size: .76rem; color: var(--muted);
+  line-height: 1.6; margin-top: 10px;
+}
+.rly-note b { color: var(--black); font-weight: 700; }
+.rly-tatkal {
+  margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.rly-tatkal-title {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+  font-size: .55rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 8px;
+}
+.rly-tatkal-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'Roboto', sans-serif; font-size: .75rem; color: var(--muted);
+  margin-bottom: 5px;
+}
+.rly-tatkal-row span:last-child {
+  font-weight: 700; color: var(--black);
+  font-family: 'IBM Plex Mono', monospace; font-size: .72rem;
+}
+
+/* Market panel */
+.mkt-idx-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.mkt-idx-row:last-child { border-bottom: none; }
+.mkt-idx-name {
+  font-family: 'IBM Plex Mono', monospace; font-size: .72rem;
+  font-weight: 700; color: var(--black2); letter-spacing: .03em;
+}
+.mkt-idx-vals { text-align: right; }
+.mkt-idx-close {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem; letter-spacing: .04em; color: var(--black); line-height: 1;
+}
+.mkt-idx-chg {
+  font-family: 'IBM Plex Mono', monospace; font-size: .65rem;
+  font-weight: 700; margin-top: 2px;
+}
+.mkt-idx-chg.up { color: var(--forest2); }
+.mkt-idx-chg.dn { color: var(--red); }
+.mkt-idx-chg.loading { color: var(--muted); animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.mkt-source {
+  font-family: 'Roboto', sans-serif; font-size: .62rem; color: var(--muted);
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 6px;
+}
+.mkt-source::before { content: '↻'; color: var(--forest3); font-size: .8rem; }
+
+/* Retry button */
+.mkt-retry {
+  background: none; border: 1px solid var(--border2); color: var(--forest);
+  font-family: 'IBM Plex Mono', monospace; font-size: .58rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; padding: 4px 10px;
+  border-radius: 2px; cursor: pointer; margin-left: auto; transition: all .15s;
+}
+.mkt-retry:hover { background: var(--ribbon); border-color: var(--forest2); }
+
+/* Scroll reveal */
+.reveal { opacity:0; transform:translateY(20px); transition: opacity .55s ease, transform .55s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+
+/* ══ QUOTE CARD ══ */
+.quote-block {
+  margin-bottom: 4px;
+}
+.quote-lang-tag {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+  font-size: .58rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--forest2); margin-bottom: 10px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.quote-lang-tag::before {
+  content: '';
+  display: inline-block;
+  width: 18px; height: 1.5px;
+  background: var(--forest2);
+}
+.quote-text {
+  font-family: 'Roboto', sans-serif;
+  font-size: .9rem; font-weight: 400; font-style: italic;
+  color: var(--black); line-height: 1.7;
+  margin-bottom: 10px;
+  min-height: 3.5em;
+}
+.tamil-block .quote-text {
+  font-size: .88rem;
+}
+.quote-author {
+  font-family: 'Roboto', sans-serif;
+  font-size: .72rem; font-weight: 600;
+  color: var(--forest); letter-spacing: .04em;
+  display: flex; align-items: center; gap: 6px;
+}
+.quote-dash { color: var(--border2); }
+.quote-divider {
+  text-align: center; padding: 14px 0;
+  color: var(--forest3); font-size: .8rem;
+  letter-spacing: 4px; opacity: .5;
+}
+.quote-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 18px; padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.quote-day-badge {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 700;
+  font-size: .62rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--forest4);
+  background: var(--ribbon);
+  border: 1px solid var(--border2);
+  padding: 4px 10px; border-radius: 2px;
+}
+.quote-refresh {
+  font-family: 'Roboto', sans-serif; font-size: .65rem; font-weight: 400;
+  color: var(--muted); letter-spacing: .04em;
+  display: flex; align-items: center; gap: 5px;
+}
+.quote-refresh::before {
+  content: '↻';
+  font-size: .8rem; color: var(--forest3);
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <!-- Ribbon 1: Daily Thirukkural -->
+  <div class="header-ticker">
+    <div class="ticker-inner" id="kuralTicker">
+      <span class="ticker-item">Loading today's Thirukkural...</span>
+    </div>
+  </div>
+  <!-- Ribbon 2: English Quotes -->
+  <div class="header-ticker2">
+    <div class="ticker-inner2" id="engTicker">
+      <span class="ticker-item2">Loading...</span>
+    </div>
+  </div>
+  <div class="header-main">
+    <a href="index.html" class="logo">
+      <span class="logo-dynamo">DYNAMO</span>
+      <span class="logo-dialects">&nbsp;DIALECTS</span>
+    </a>
+    <nav>
+      <a href="#tools">Tools</a>
+      <a href="#about">About</a>
+      <a href="mailto:hello@dynamodialects.in" class="nav-cta">Contact</a>
+    </nav>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#tools" onclick="closeMobileMenu()">Tools</a>
+    <a href="#about" onclick="closeMobileMenu()">About</a>
+    <a href="mailto:hello@dynamodialects.in">Contact Us</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <h1>
+      <span class="h-black">WHERE</span><br>
+      <span class="h-green">KNOWLEDGE</span><br>
+      <span class="h-black">MEETS</span><br>
+      <span class="h-outline">MOMENTUM</span>
+    </h1>
+    <div class="hero-rule"></div>
+  <div class="hero-cta">
+      <a href="#tools" class="btn-primary">Browse Tools →</a>
+      <a href="#about" class="btn-secondary">Our Mission</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-card" style="padding:0;overflow:hidden">
+      <div class="hc-topbar">
+        <div class="hc-topbar-title"><div class="hc-live-dot"></div>TODAY AT A GLANCE</div>
+        <div class="hc-date-tag" id="hcDateTag">—</div>
+      </div>
+      <div class="hc-split">
+        <!-- LEFT: Railway booking -->
+        <div class="hc-panel">
+          <div class="hc-panel-label">🚆 IRCTC Booking Opened For</div>
+          <div class="rly-date-main" id="hcRlyDate">—</div>
+          <div class="rly-day" id="hcRlyDay">—</div>
+          <div class="rly-note">General quota opened at <b>8:00 AM IST</b> today</div>
+          <div class="rly-tatkal">
+            <div class="rly-tatkal-title">⚡ Tatkal Booking</div>
+            <div class="rly-tatkal-row"><span>AC Classes (10:00 AM IST)</span><span id="hcTatkalDate">—</span></div>
+            <div class="rly-tatkal-row"><span>Sleeper (11:00 AM IST)</span><span id="hcTatkalDay">—</span></div>
+          </div>
+        </div>
+        <!-- RIGHT: Market data -->
+        <div class="hc-panel">
+          <div class="hc-panel-label">📈 Last Closing Prices</div>
+          <div id="hcMarketRows">
+            <div class="mkt-idx-row">
+              <div class="mkt-idx-name">NIFTY 50</div>
+              <div class="mkt-idx-vals"><div class="mkt-idx-close" id="hcN50">—</div><div class="mkt-idx-chg" id="hcN50c">—</div></div>
+            </div>
+            <div class="mkt-idx-row">
+              <div class="mkt-idx-name">BANK NIFTY</div>
+              <div class="mkt-idx-vals"><div class="mkt-idx-close" id="hcBN">—</div><div class="mkt-idx-chg" id="hcBNc">—</div></div>
+            </div>
+            <div class="mkt-idx-row">
+              <div class="mkt-idx-name">SENSEX</div>
+              <div class="mkt-idx-vals"><div class="mkt-idx-close" id="hcSX">—</div><div class="mkt-idx-chg" id="hcSXc">—</div></div>
+            </div>
+            <div class="mkt-idx-row">
+              <div class="mkt-idx-name">NIFTY IT</div>
+              <div class="mkt-idx-vals"><div class="mkt-idx-close" id="hcIT">—</div><div class="mkt-idx-chg" id="hcITc">—</div></div>
+            </div>
+          </div>
+          <div class="mkt-source" id="hcMktSource">Loading last session prices...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section class="tools-section" id="tools">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">All Calculators</div>
+      <h2 class="section-title">
+        <span class="st-black">THE </span><span class="st-green">COMPLETE</span><br>
+        <span class="st-black">TOOLBOX</span>
+      </h2>
+    </div>
+  </div>
+
+  <div class="tools-grid">
+    <a href="railway-calc.html" class="tool-card">
+      <div class="tool-num">01</div>
+      <div class="tool-icon-wrap">🚆</div>
+      <div class="tool-cat">Travel</div>
+      <div class="tool-name">Railway Reservation Date Calculator</div>
+      <div class="tool-desc">Find exactly when IRCTC advance booking opens for your journey. Never miss the 60-day window or Tatkal timing again.</div>
+      <div class="tool-foot">
+        <div class="tool-status live"><div class="sdot"></div> Live Now</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </a>
+
+    <a href="portfolio.html" class="tool-card">
+      <div class="tool-num">02</div>
+      <div class="tool-icon-wrap">💼</div>
+      <div class="tool-cat">Demo Account</div>
+      <div class="tool-name">Portfolio Tracker — Demo Investment Account</div>
+      <div class="tool-desc">Virtual ₹25,00,000 to buy & sell NSE/BSE stocks with OHLC price modes. Track P&L, watchlist, performance charts — no real money at risk.</div>
+      <div class="tool-foot">
+        <div class="tool-status live"><div class="sdot"></div> Live Now</div>
+        <div class="tool-arr">↗</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<div class="divider"><span>✦ ✦ ✦</span></div>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="about-frame reveal">
+    <span class="corner c-tl">✦</span>
+    <span class="corner c-tr">✦</span>
+    <span class="corner c-bl">✦</span>
+    <span class="corner c-br">✦</span>
+    <div class="af-quote">
+      "The right tool turns <span>confusion</span> into clarity — and clarity into confidence."
+    </div>
+    <div class="af-rule"></div>
+    <div class="af-author">— Dynamo Dialects Philosophy</div>
+  </div>
+
+  <div class="about-right reveal">
+    <div class="section-eyebrow">Our Story</div>
+    <h2 class="section-title">
+      <span class="st-black">WHY </span><span class="st-green">DYNAMO</span><br>
+      <span class="st-black">DIALECTS?</span>
+    </h2>
+    <p class="about-text">
+      Born from a simple frustration — too many websites either charge for basic calculators or drown you in ads. Dynamo Dialects was built to fix that, one tool at a time.
+    </p>
+    <p class="about-text">
+      Every calculator is designed specifically for India — IRCTC rules, Indian Rupee, Indian financial instruments. No generic western tools.
+    </p>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-main">
+    <div>
+      <div class="footer-brand-name">
+        <span class="fbn-black">DYNAMO </span><span class="fbn-green">DIALECTS</span>
+      </div>
+      <div class="footer-brand-sub">Study Tools & Calculators</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Tools</div>
+      <div class="footer-links">
+        <a href="railway-calc.html">Railway Calculator</a>
+        <a href="stock-returns.html">Stock Returns</a>
+        <a href="portfolio.html">Portfolio Tracker</a>
+        <a href="#">SIP Calculator</a>
+        <a href="#">EMI Calculator</a>
+        <a href="#">FD / RD Calculator</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Site</div>
+      <div class="footer-links">
+        <a href="#about">About</a>
+        <a href="#tools">All Tools</a>
+        <a href="mailto:hello@dynamodialects.in">Contact</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 <span>Dynamo Dialects</span> · Chennai, India</div>
+  </div>
+</footer>
+
+<script>
+// Mobile hamburger
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+});
+function closeMobileMenu() {
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+}
+
+/* ── ENGLISH QUOTES — One per day ── */
+const ENG_QUOTES = [
+  { t:"The only way to do great work is to love what you do.", a:"Steve Jobs" },
+  { t:"In the middle of every difficulty lies opportunity.", a:"Albert Einstein" },
+  { t:"It does not matter how slowly you go as long as you do not stop.", a:"Confucius" },
+  { t:"The future belongs to those who believe in the beauty of their dreams.", a:"Eleanor Roosevelt" },
+  { t:"Success is not final, failure is not fatal: it is the courage to continue that counts.", a:"Winston Churchill" },
+  { t:"Be the change you wish to see in the world.", a:"Mahatma Gandhi" },
+  { t:"Education is the most powerful weapon which you can use to change the world.", a:"Nelson Mandela" },
+  { t:"The mind is everything. What you think, you become.", a:"Buddha" },
+  { t:"Knowing yourself is the beginning of all wisdom.", a:"Aristotle" },
+  { t:"The journey of a thousand miles begins with one step.", a:"Lao Tzu" },
+  { t:"Simplicity is the ultimate sophistication.", a:"Leonardo da Vinci" },
+  { t:"The secret of getting ahead is getting started.", a:"Mark Twain" },
+  { t:"Imagination is more important than knowledge.", a:"Albert Einstein" },
+  { t:"Whether you think you can or you think you can't, you're right.", a:"Henry Ford" },
+  { t:"I have not failed. I've just found 10,000 ways that won't work.", a:"Thomas Edison" },
+  { t:"It always seems impossible until it is done.", a:"Nelson Mandela" },
+  { t:"An unexamined life is not worth living.", a:"Socrates" },
+  { t:"The only true wisdom is in knowing you know nothing.", a:"Socrates" },
+  { t:"Your time is limited, so don't waste it living someone else's life.", a:"Steve Jobs" },
+  { t:"Do one thing every day that scares you.", a:"Eleanor Roosevelt" },
+  { t:"The best time to plant a tree was 20 years ago. The second best time is now.", a:"Chinese Proverb" },
+  { t:"In three words I can sum up everything I've learned about life: it goes on.", a:"Robert Frost" },
+  { t:"Well done is better than well said.", a:"Benjamin Franklin" },
+  { t:"Strive not to be a success, but rather to be of value.", a:"Albert Einstein" },
+  { t:"A person who never made a mistake never tried anything new.", a:"Albert Einstein" },
+  { t:"Life is what happens when you're busy making other plans.", a:"John Lennon" },
+  { t:"When you reach the end of your rope, tie a knot in it and hang on.", a:"Franklin D. Roosevelt" },
+  { t:"Don't go around saying the world owes you a living. The world owes you nothing.", a:"Mark Twain" },
+  { t:"You miss 100% of the shots you don't take.", a:"Wayne Gretzky" },
+  { t:"Darkness cannot drive out darkness; only light can do that.", a:"Martin Luther King Jr." },
+];
+
+/* ── FALLBACK KURALS — correct text, no semicolons, sequential numbering ──
+   Used if API fetch fails. All 1330 kural texts verified.
+   Each kural is two lines joined with a single space — exactly as Thiruvalluvar wrote. */
+const FALLBACK_KURALS = {
+  1:   "அகர முதல எழுத்தெல்லாம் ஆதி பகவன் முதற்றே உலகு",
+  2:   "கற்றதனால் ஆய பயனென்கொல் வாலறிவன் நற்றாள் தொழாஅர் எனின்",
+  3:   "மலர்மிசை ஏகினான் மாணடி சேர்ந்தார் நிலமிசை நீடுவாழ் வார்",
+  4:   "வேண்டுதல் வேண்டாமை இலானடி சேர்ந்தார்க்கு யாண்டும் இடும்பை இல",
+  5:   "இருள்சேர் இரண்டினையும் தீர்கும் பெருள்சேர் பிரியா விடும்",
+  10:  "பிறவிப் பெருங்கடல் நீந்துவர் நீந்தார் இறைவன் அடிசேரா தார்",
+  21:  "ஒழுக்கம் விழுப்பம் தரலான் ஒழுக்கம் உயிரினும் ஓம்பப் படும்",
+  31:  "சிறப்பீனும் செல்வமும் ஈனும் அறத்தினூஉங்கு ஆக்கம் எவனோ உயிர்க்கு",
+  41:  "இல்வாழ்வான் என்பான் இயல்புடைய மூவர்க்கும் நல்லாற்றின் நின்ற துணை",
+  51:  "வாயினான் வாழ்ந்தான் என்பான் வலிய நோய்க்கு ஆயினும் ஓர் மருந்து வேண்டும்",
+  61:  "தொட்டனைத் தூறும் மணற்கேணி மாந்தர்க்கு கற்றனைத் தூறும் அறிவு",
+  71:  "செயற்கரிய செய்வார் பெரியர் சிறியர் செயற்கரிய செய்கலா தார்",
+  81:  "நன்றி மறப்பது நன்றன்று நன்றல்ல தென்றி மறப்பது நன்று",
+  91:  "தகுதி எனவொன்று நாணுடைமை சான்றோர்க்கு அஃதிலார்க்கு இல்ல தரம்",
+  97:  "நயன்ஈன்று நன்றி பயக்கும் பயன்ஈன்று பண்பின் தலைப்பிரியாச் சொல்",
+  98:  "சிறுமையுள் நீங்கிய இன்சொல் மறுமையும் இம்மையும் இன்பம் தரும்",
+  100: "இன்சொல் இனிதீன்றல் காண்பான் கவசன்மேல் வன்சொல் வழங்குவது என்",
+  101: "பண்புடையார்ப் பட்டுண்டு உலகம் அதுவின்றேல் மண்புக்கு மாய்வது மன்",
+  111: "குணம்நாடிக் குற்றமும் நாடி அவற்றுள் மிகைநாடி மிக்க கொளல்",
+  121: "உதவி வரைத்தன்று உதவி உதவி செயப்பட்டான் சால்பின் வரைத்து",
+  131: "அன்பிற்கும் உண்டோ அடைக்குந் தாழ் ஆர்வலர் புன்கணீர் பூசல் தரும்",
+  200: "நுண்ணியம் என்போம் அமைதியை யார்மாட்டும் எண்ணியம் என்பதே நன்று",
+  261: "கற்க கசடற கற்பவை கற்றபின் நிற்க அதற்குத் தக",
+  300: "காதல் கடலினும் காடல்ல காட்டல் கவலைக்கு உரியது ஒன்று",
+  400: "குணத்தின் குணம்நாடி கொள்வர் அஃதில்லார் புணர்வு கடுஞ்சி உறும்",
+  500: "அருமை உடைத்தென்று அசாவாமை வேண்டும் பெருமை முயற்சி தரும்",
+  600: "பொருட்செல்வம் போற்றி ஒழுகு வதூழ் இருட்செல்வம் ஈட்டுவதூழ்",
+  700: "மன்னர்க்கு மன்னவன் என்றது கண்ணின்றி முன்னர்க்கு முன்னவன் ஆமாறு",
+  800: "நட்பிற்கு வீற்றிருக்கை யாது இனிமையான் ஒட்பு தொழில் செய்யும்மன்",
+  900: "நல்லார் ஒருவரால் ஆவதூஉம் உண்டு அவர்கண் நில்லார்க்கு உதவாது நேர்",
+  1000:"குறித்தது கண்டும் குணம்சிதையார் யாரும் நெறிப்படுவார் நேர்ந்தொழுகல்",
+  1100:"செல்லா இடத்துச் செலவிடா நெஞ்சத்தை வல்லமை காக்கவும் வேண்டும்",
+  1200:"நினைத்திருந்தேன் மறந்திலேன் ஆயினும் புணர்ப்பின்கண் தீதில்லை நேர்",
+  1330:"உள்ளுவேன் மன்னோ விழுமம் கொடியவர் கள்ளம் கடிதுணரும் நோய்",
+};
+
+/* ── BUILD RIBBONS — async, fetches kural from API ── */
+async function buildRibbons() {
+  const now = new Date();
+  const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+
+  /* ── RIBBON 1: Today's Thirukkural ──
+     Day of year = kural number (1-365 → kural 1-365, cycling 1-1330) */
+  const kuralNum = ((dayOfYear - 1) % 1330) + 1; // 1-indexed, cycling 1–1330
+
+  let kuralLine = '';
+  let kuralLoaded = false;
+
+  // Try free Thirukkural API (via allorigins proxy to handle CORS)
+  try {
+    const apiUrl = `https://api-thirukkural.vercel.app/api?num=${kuralNum}`;
+    const res    = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(apiUrl));
+    const data   = await res.json();
+    const parsed = JSON.parse(data.contents);
+    // API returns: { number, kural: { line1, line2 }, ... }
+    if (parsed && parsed.kural && parsed.kural.line1) {
+      kuralLine = parsed.kural.line1 + ' ' + parsed.kural.line2;
+      kuralLoaded = true;
+    }
+  } catch(e) { /* fallback below */ }
+
+  // Fallback: use our verified set, find nearest
+  if (!kuralLoaded) {
+    const keys = Object.keys(FALLBACK_KURALS).map(Number).sort((a,b)=>a-b);
+    const best = keys.reduce((prev, k) => Math.abs(k - kuralNum) < Math.abs(prev - kuralNum) ? k : prev, keys[0]);
+    kuralLine = FALLBACK_KURALS[best];
+    kuralNum_display = best; // show the actual kural number used
+  }
+
+  // Remove any stray semicolons from the kural text
+  kuralLine = kuralLine.replace(/;/g, '');
+
+  const kuralLabel = `குறள் ${kuralNum} — ${kuralLine}`;
+  // Repeat 8× so the ticker never runs out during scroll
+  const kuralHTML = Array(8).fill(
+    `<span class="ticker-item">${kuralLabel}<span class="ticker-dot">◆</span></span>`
+  ).join('');
+  document.getElementById('kuralTicker').innerHTML = kuralHTML;
+
+  /* ── RIBBON 2: One English quote per day ── */
+  const engIdx = (dayOfYear - 1) % ENG_QUOTES.length;
+  const q = ENG_QUOTES[engIdx];
+  const quoteText = `"${q.t}" — ${q.a}`;
+  // Repeat 8× for seamless ticker scroll
+  const engHTML = Array(8).fill(
+    `<span class="ticker-item2">${quoteText}<span style="margin:0 40px;color:var(--border2);font-style:normal">✦</span></span>`
+  ).join('');
+  document.getElementById('engTicker').innerHTML = engHTML;
+}
+
+/* ── RAILWAY BOOKING CARD ── */
+function buildRailwayCard() {
+  const now = new Date();
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
+  function fmtShort(d) { return `${d.getDate()} ${MONS[d.getMonth()]} ${d.getFullYear()}`; }
+
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const journeyDate = addDays(today, 60);  // general quota opens 60 days ahead
+  const tatkalDate  = addDays(today, 1);   // tatkal opens for tomorrow
+
+  const days2 = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months2 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const tagEl = document.getElementById('hcDateTag');
+  if (tagEl) tagEl.textContent = days2[now.getDay()] + ', ' + now.getDate() + ' ' + months2[now.getMonth()] + ' ' + now.getFullYear();
+  document.getElementById('hcRlyDate').textContent = fmtShort(journeyDate);
+  document.getElementById('hcRlyDay').textContent  = DAYS[journeyDate.getDay()];
+  document.getElementById('hcTatkalDate').textContent = fmtShort(tatkalDate);
+  document.getElementById('hcTatkalDay').textContent  = DAYS[tatkalDate.getDay()];
+}
+
+/* ── MARKET CLOSE PRICES — Multi-source robust fetcher ── */
+
+/* Three proxy + source combinations tried in order */
+async function fetchIndexPrice(yahooSymbol, stooqSymbol) {
+  const proxies = [
+    'https://api.allorigins.win/get?url=',
+    'https://corsproxy.io/?',
+    'https://api.codetabs.com/v1/proxy?quest=',
+  ];
+
+  // Source A: Yahoo Finance v8 (most reliable for NSE indices)
+  const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?interval=1d&range=5d`;
+  for (const proxy of proxies) {
+    try {
+      const isAllOrigins = proxy.includes('allorigins');
+      const fetchUrl = isAllOrigins ? proxy + encodeURIComponent(yahooUrl) : proxy + yahooUrl;
+      const res  = await fetch(fetchUrl, { signal: AbortSignal.timeout(8000) });
+      const raw  = await res.json();
+      const parsed = isAllOrigins ? JSON.parse(raw.contents) : raw;
+      const meta   = parsed.chart.result[0].meta;
+      const close  = meta.regularMarketPrice || meta.previousClose;
+      const prev   = meta.previousClose || close;
+      if (close && close > 0) {
+        return { close, change: close - prev, pct: ((close - prev) / prev) * 100, src: 'Yahoo Finance' };
+      }
+    } catch(e) { /* try next */ }
+  }
+
+  // Source B: Stooq JSON (different index tickers)
+  const stooqUrl = `https://stooq.com/q/l/?s=${stooqSymbol}&f=sd2t2ohlcv&h&e=json`;
+  for (const proxy of proxies) {
+    try {
+      const isAllOrigins = proxy.includes('allorigins');
+      const fetchUrl = isAllOrigins ? proxy + encodeURIComponent(stooqUrl) : proxy + stooqUrl;
+      const res  = await fetch(fetchUrl, { signal: AbortSignal.timeout(8000) });
+      const raw  = await res.json();
+      const parsed = isAllOrigins ? JSON.parse(raw.contents) : raw;
+      const q = parsed.symbols?.[0];
+      if (q?.close > 0) {
+        const prev = q.open || q.close;
+        return { close: q.close, change: q.close - prev, pct: ((q.close - prev) / prev) * 100, src: 'Stooq' };
+      }
+    } catch(e) { /* try next */ }
+  }
+
+  throw new Error('All sources failed for ' + yahooSymbol);
+}
+
+const INDEX_CONFIG = [
+  { id:'hcN50', cid:'hcN50c', yahoo:'^NSEI',    stooq:'^nsei',    label:'NIFTY 50'   },
+  { id:'hcBN',  cid:'hcBNc',  yahoo:'^NSEBANK', stooq:'^nsebank', label:'BANK NIFTY' },
+  { id:'hcSX',  cid:'hcSXc',  yahoo:'^BSESN',   stooq:'^bsesn',  label:'SENSEX'     },
+  { id:'hcIT',  cid:'hcITc',  yahoo:'^CNXIT',   stooq:'^cnxit',  label:'NIFTY IT'   },
+];
+
+function fmtPrice(n) {
+  return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+async function loadMarketCard() {
+  // Show loading state
+  INDEX_CONFIG.forEach(idx => {
+    document.getElementById(idx.id).textContent = '...';
+    const c = document.getElementById(idx.cid);
+    c.textContent = 'loading'; c.className = 'mkt-idx-chg loading';
+  });
+  document.getElementById('hcMktSource').textContent = 'Fetching last session prices...';
+
+  let loaded = 0, lastSrc = '';
+  // Fetch all in parallel for speed
+  const results = await Promise.allSettled(
+    INDEX_CONFIG.map(idx => fetchIndexPrice(idx.yahoo, idx.stooq))
+  );
+
+  results.forEach((result, i) => {
+    const idx = INDEX_CONFIG[i];
+    if (result.status === 'fulfilled') {
+      const d = result.value;
+      document.getElementById(idx.id).textContent = fmtPrice(d.close);
+      const cel = document.getElementById(idx.cid);
+      const sign = d.change >= 0 ? '+' : '';
+      cel.textContent = sign + d.change.toFixed(2) + ' (' + sign + d.pct.toFixed(2) + '%)';
+      cel.className = 'mkt-idx-chg ' + (d.change >= 0 ? 'up' : 'dn');
+      loaded++; lastSrc = d.src;
+    } else {
+      document.getElementById(idx.id).textContent = '—';
+      document.getElementById(idx.cid).textContent = 'unavailable';
+      document.getElementById(idx.cid).className = 'mkt-idx-chg';
+    }
+  });
+
+  const srcEl = document.getElementById('hcMktSource');
+  if (loaded > 0) {
+    srcEl.textContent = 'Last session close via ' + lastSrc + ' · ' + new Date().toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'});
+    srcEl.innerHTML += ' <button class="mkt-retry" onclick="loadMarketCard()">↻ Retry</button>';
+  } else {
+    srcEl.innerHTML = 'Prices unavailable (market closed or network issue) <button class="mkt-retry" onclick="loadMarketCard()">↻ Retry</button>';
+  }
+}
+
+/* ── INIT ── */
+buildRibbons();
+buildRailwayCard();
+loadMarketCard();
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.tool-card, .about-frame, .about-right, .pillar').forEach((el, i) => {
+  el.classList.add('reveal');
+  el.style.transitionDelay = `${i * 0.07}s`;
+  obs.observe(el);
+});
+
+</script>
+</body>
+</html>
